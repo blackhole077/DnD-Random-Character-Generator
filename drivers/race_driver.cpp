@@ -1,5 +1,5 @@
-#include "Race.h"
-#include "roll.h"
+#include "..\headers\Race.h"
+#include "..\headers\roll.h"
 
 using namespace std;
 

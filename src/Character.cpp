@@ -1,6 +1,6 @@
-#include "Character.h"
-#include "Race.h"
-#include "Stats.h"
+#include "..\headers\Character.h"
+#include "..\headers\Race.h"
+#include "..\headers\Stats.h"
 #include <iostream>
 #include <string>
 #include <cstring>

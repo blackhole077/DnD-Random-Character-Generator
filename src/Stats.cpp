@@ -1,4 +1,4 @@
-#include "Stats.h"
+#include "..\headers\Stats.h"
 using namespace std;
 
 Stats::Stats(){}
