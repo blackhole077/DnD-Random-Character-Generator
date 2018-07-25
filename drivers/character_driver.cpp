@@ -1,9 +1,9 @@
-#include "headers/Character.h"
-#include "headers/Race.h"
-#include "headers/Stats.h"
-#include "headers/Class.h"
-#include "headers/dnd_template_functions.h"
-#include "headers/utilsDnD.h"
+#include "..\headers\Character.h"
+#include "..\headers\Race.h"
+#include "..\headers\Stats.h"
+#include "..\headers\Class.h"
+#include "..\headers\dnd_template_functions.h"
+#include "..\headers\utilsDnD.h"
 #include <iostream>
 #include <string>
 #include <cstring>
