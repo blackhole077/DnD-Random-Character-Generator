@@ -185,6 +185,53 @@ void Class::set_stat_distribution()
 	set_bad_stats(bs);
 }
 
+void Class::smart_stat_increase(int step){
+	vector<int> g_stats;
+	vector<int> b_stats;
+	switch(step){
+		case 1:{ //RAISE GOOD STAT THAT IS ODD (UNIFORM RANDOM DIST. IF MORE THAN ONE)
+		g_stats = get_good_stats();
+		vector<int> temp;
+		for(int var : temp)
+		{
+			if(var % 2 == 1){
+				temp.push_back(var);
+			}
+		}
+		//If there is more than one good stat that is odd
+		if(temp.size > 1){
+			//1. Random uniform distribution to select which stat gets increased.
+		}
+		//If all of the good stats are at even values
+		else if(temp.empty){
+			//1. Randomly select step (exclude step 1) [The random selection should have more weight for step 2 than anything else]
+			//2. Call smart_stat_increase using that step as the argument
+		}
+		else{//Singleton Case
+			//Raise its stat and set it back into the stats section.
+		}		
+		}
+		case 2:{//RAISE GOOD STAT AT RANDOM (UNIFORM RANDOM DIST.)
+
+		}
+		case 3:{//RAISE BAD STAT THAT IS ODD (UNIFORM RANDOM DIST. IF MORE THAN ONE)
+
+		}
+		case 4:{//RAISE BAD STAT AT RANDOM (UNIFORM RANDOM DIST.)
+
+		}
+		case 5:{//RAISE ANY STAT AT RANDOM (UNIFORM RANDOM DIST.)
+
+		}
+		default:{//DEFINITELY SHOULD NOT END UP HERE, LOG AN ERROR AND CALL IT A DAY (OR JUST CALL STEP 5 I DUNNO)
+
+		}
+
+	}
+
+
+}
+
 void Class::determine_base_attack_bonus()
 {
 	int base_attack_bonus = 0;
