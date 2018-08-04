@@ -189,43 +189,57 @@ void Class::smart_stat_increase(int step){
 	vector<int> g_stats;
 	vector<int> b_stats;
 	bool raised = false;
-	switch(step){
-		case 1:{ //RAISE GOOD STAT THAT IS ODD (UNIFORM RANDOM DIST. IF MORE THAN ONE)
+	switch (step)
+	{
+	case 1:
+	{ //RAISE GOOD STAT THAT IS ODD (UNIFORM RANDOM DIST. IF MORE THAN ONE)
 		g_stats = get_good_stats();
 		int index = 0;
 		//This while loop will continue infinitely if all the stats are even numbers. It would work if we skip the "Check if odd" step but that's basically step 2 so yeah.
 		//Consider zipping a copy of the vector with an array {1,2,3} to keep track of which stat would be raised "smartly"? Dunno if this is more expensive or not though, you'll have to check.
-		while(!raised){
-			index = rolldx(g_stats.size())-1;
-			if(g_stats.at(index) % 2 == 1){
-				g_stats.at(index) += 1;
-				raised = true;
+		int counter_odd = 0;
+		for (int x : g_stats)
+		{
+			if (x % 2 == 1)
+			{
+				counter_odd++;
 			}
-			else{
-
+		}
+		if (counter_odd == 0 || counter_odd == g_stats.size()) //edge cases to address to prevent infinite loop
+		{
+			//Maybe consider doing this instead:
+			/**
+			 * Weighted Distribution from {40, 30, 10, 10 10} -> {0, 70, 10, 10, 10} of steps 1-5 and do random selection instead?
+			 * Seems a bit strange, considering this wouldn't make sense for the second edge case (all 3 stats are odd), so maybe we'll have to split this if statement
+			 * 
+			 **/
+			smart_stat_increase(2);
+			break;
+		}
+		else
+		{
+			while (!raised)
+			{
+				index = rolldx(g_stats.size()) - 1;
+				if (g_stats.at(index) % 2 == 1)
+				{
+					g_stats.at(index) += 1;
+					raised = true;
+				}
+				else
+				{
+				}
 			}
 		}
 		break;
 		//If there is more than one good stat that is odd
-		if(temp.size > 1){
-			//1. Random uniform distribution to select which stat gets increased.
-			int index = rolldX(temp.size())-1;
-
-		}
-		//If all of the good stats are at even values
-		else if(temp.empty){
-			//1. Randomly select step (exclude step 1) [The random selection should have more weight for step 2 than anything else]
-			//2. Call smart_stat_increase using that step as the argument
-		}
-		else{//Singleton Case
-			//Raise its stat and set it back into the stats section.
-		}		
-		}
-		case 2:{//RAISE GOOD STAT AT RANDOM (UNIFORM RANDOM DIST.)
-			g_stats = get_good_stats();
-			index = rolldX(g_stats.size())-1;
-			g_stats.at(index) += 1;
-			break;
+	}
+	case 2:
+	{ //RAISE GOOD STAT AT RANDOM (UNIFORM RANDOM DIST.)
+		g_stats = get_good_stats();
+		index = rolldX(g_stats.size()) - 1;
+		g_stats.at(index) += 1;
+		break;
 		}
 		case 3:{//RAISE BAD STAT THAT IS ODD (UNIFORM RANDOM DIST. IF MORE THAN ONE)
 
