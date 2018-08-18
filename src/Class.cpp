@@ -205,14 +205,21 @@ void Class::smart_stat_increase(int step){
 				counter_odd++;
 			}
 		}
-		if (counter_odd == 0 || counter_odd == g_stats.size()) //edge cases to address to prevent infinite loop
+		if (counter_odd == 0) //edge cases to address to prevent infinite loop
 		{
+			vector<int> choice_weights = {0, 70, 10, 10, 10};
+			int choice_to_make = weighted_distribution(choice_weights);
+			smart_stat_increase(choice_to_make);
+
 			//Maybe consider doing this instead:
 			/**
 			 * Weighted Distribution from {40, 30, 10, 10 10} -> {0, 70, 10, 10, 10} of steps 1-5 and do random selection instead?
 			 * Seems a bit strange, considering this wouldn't make sense for the second edge case (all 3 stats are odd), so maybe we'll have to split this if statement
 			 * 
 			 **/
+		}
+		if (counter_odd == g_stats.size())
+		{
 			smart_stat_increase(2);
 			break;
 		}

@@ -45,3 +45,24 @@ int rolldX(const int numFace)
 	return roll;
 	//Returns the address to the first element of the array
 }
+
+int weighted_distribution(vector<int> weights)
+{
+	int sum_of_weight = 0;
+	int num_choices = weights.length;
+	for (int i = 0; i < num_choices; i++)
+	{
+		sum_of_weight += weights.at(1);
+	}
+	int rnd = random(sum_of_weight);
+	for (int i = 0; i < num_choices; i++)
+	{
+		int comparison = weights.at(i);
+		if (rnd < comparison)
+		{
+			return i;
+		}
+		rnd -= comparison;
+	}
+	assert(!"should never get here");
+}
