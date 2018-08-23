@@ -185,22 +185,50 @@ void Class::set_stat_distribution()
 	set_bad_stats(bs);
 }
 
+void Class::smart_stat_increase_loop(int level)
+{
+	if (level < 4)
+	{
+		return;
+	}
+	else
+	{
+		while (level >= 4)
+		{
+			if (level % 4 == 0)
+			{
+				printf("%d mod 4 is 0 right?\n",level);
+				vector<int> choice_weights = {40, 30, 10, 10, 10};
+				int choice_to_make = weighted_distribution(choice_weights);
+				smart_stat_increase(choice_to_make);
+			}
+			level--;
+		}
+		return;
+	}
+}
+
 void Class::smart_stat_increase(int step)
 {
 	vector<int> g_stats;
 	vector<int> b_stats;
 	bool raised = false;
+	int index;
+	cout << "We're going into step " << step << endl;
+	system("pause");
 	switch (step)
 	{
 	case 1:
 	{ //RAISE GOOD STAT THAT IS ODD (UNIFORM RANDOM DIST. IF MORE THAN ONE)
 		g_stats = get_good_stats();
-		int index = 0;
+		index = 0;
+		
 		//This while loop will continue infinitely if all the stats are even numbers. It would work if we skip the "Check if odd" step but that's basically step 2 so yeah.
 		//Consider zipping a copy of the vector with an array {1,2,3} to keep track of which stat would be raised "smartly"? Dunno if this is more expensive or not though, you'll have to check.
 		int counter_odd = 0;
 		for (int x : g_stats)
 		{
+			cout << "Stat " << x << endl;
 			if (x % 2 == 1)
 			{
 				counter_odd++;
@@ -211,6 +239,7 @@ void Class::smart_stat_increase(int step)
 			vector<int> choice_weights = {0, 70, 10, 10, 10};
 			int choice_to_make = weighted_distribution(choice_weights);
 			cout << "Taking step " << choice_to_make << endl;
+			system("pause");
 			smart_stat_increase(choice_to_make);
 
 			//Maybe consider doing this instead:
@@ -229,7 +258,7 @@ void Class::smart_stat_increase(int step)
 		{
 			while (!raised)
 			{
-				index = rolldx(g_stats.size()) - 1;
+				index = rolldX(g_stats.size()) - 1;
 				if (g_stats.at(index) % 2 == 1)
 				{
 					g_stats.at(index) += 1;
@@ -266,7 +295,7 @@ void Class::smart_stat_increase(int step)
 		}
 		if (counter_odd == 0) //edge cases to address to prevent infinite loop
 		{
-			vector<int> choice_weights = {0, 70, 10, 10, 10};
+			vector<int> choice_weights = {10, 10, 0, 70, 10};
 			int choice_to_make = weighted_distribution(choice_weights);
 			cout << "Taking step " << choice_to_make << endl;
 			smart_stat_increase(choice_to_make);
@@ -287,7 +316,7 @@ void Class::smart_stat_increase(int step)
 		{
 			while (!raised)
 			{
-				index = rolldx(b_stats.size()) - 1;
+				index = rolldX(b_stats.size()) - 1;
 				if (b_stats.at(index) % 2 == 1)
 				{
 					b_stats.at(index) += 1;
@@ -320,7 +349,7 @@ void Class::smart_stat_increase(int step)
 		else
 		{
 			b_stats = get_bad_stats();
-			bstats.at(index) += 1;
+			b_stats.at(index) += 1;
 			return;
 		}
 		break;
@@ -856,6 +885,7 @@ void Class::create_character()
 	determine_complexity();
 	set_stat_distribution();
 	determine_hit_die();//Just determines what die to roll for HP
+	smart_stat_increase_loop(class_level);
 	determine_deity();
 	set_alignments();
 	determine_alignment();

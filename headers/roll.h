@@ -1,4 +1,7 @@
 /*Section for rolling dice*/
+#include <random>
+#include <vector>
+
 int cdfRoll();
 
 int rollXdX(const int numDie, const int numFace);
