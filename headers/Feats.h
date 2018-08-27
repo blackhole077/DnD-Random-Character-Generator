@@ -29,8 +29,6 @@ private:
     void set_required_stats(std::vector<std::pair<std::string,int>> arg_required_stats);
     void set_required_feats(std::vector<Feats> arg_required_feats);
     void set_required_classes(std::vector<std::string>> arg_required_classes);
-    void set_required_deities(std::vector<std::string> arg_required_deities);
-    void set_required_alignments(std::vector<std::string> arg_required_alignments);
     void set_required_base_attack_bonus(int arg_bab);
 
 public: 
@@ -44,7 +42,5 @@ public:
     std::vector<std::pair<std::string,int>> get_required_stats() const;
     std::vector<Feats> get_required_feats() const;
     std::vector<std::string> get_required_classes() const;
-    std::vector<std::string> get_required_deities() const;
-    std::vector<std::string> get_required_alignments() const;
     int get_required_base_attack_bonus() const; 
 }
