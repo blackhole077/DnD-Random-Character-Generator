@@ -71,3 +71,8 @@ void Feats::set_required_classes(std::vector<std::string> vector){
 void Feats::set_required_bab(int x){
     this->required_bab = x;
 }
+
+std::map<std::string,Feats> Feats::fetch_all_feats(){
+    map<string,Feats> all_feats;
+    return all_feats;
+}
