@@ -31,7 +31,12 @@ Upon selecting a race, which is stored as a string (or an array of characters), 
 These attributes include bonuses and penalties to the 6 stats and the base age, or age of adulthood for that particular race.
 This function is called in CharGen.cpp
 */
-
+/*
+The function smart_stat_distribution attempts to take in the 6 randomly rolled numbers [3,18] and allocate them in a "smart" fashion.
+For the sake of complexity, each class is assumed to have 3 preferred stats, as well as 3 dump stats.
+What this means is that the 3 highest values rolled will be allocated to a class's preferred stats (albeit at random), while remaining stats are allocated (again, at random) to the dump stats.
+*/
+//TODO: There's a bit of code DRYing we can do for actually allocating the stats (the code is 99% the same, save for what vector is being acted upon.)
 std::map<int,int> smart_stat_distribution(std::vector<int> bad_class_stats, std::vector<int> bad_available_stats, std::vector<int> good_class_stats, std::vector<int> good_available_stats){
 	std::map<int,int> stats_map;
 	int counter = bad_available_stats.size();
@@ -39,11 +44,6 @@ std::map<int,int> smart_stat_distribution(std::vector<int> bad_class_stats, std:
 	{
 		int ins;
 		int roll;
-		//std::cout << "badStat contains:";
-		//for (unsigned i = 0; i < badStats.size(); ++i)
-		//	std::cout << ' ' << badStats[i];
-		//cout << endl;
-		//bad_stats[i] refers to each index that I labeled as a "bad stat" in the Class object.
 		if (bad_available_stats.size() != 1)
 		{
 			roll = rolldX(bad_available_stats.size());
@@ -62,18 +62,15 @@ std::map<int,int> smart_stat_distribution(std::vector<int> bad_class_stats, std:
 		{
 			bad_available_stats.erase(bad_available_stats.begin());
 		}
-		//printf("Good Stat of %d is %d\n", i, statsRolled[rolled]);
 	}
+  /** Begin allocation of "preferred stats", which involves taking the 3 highest rolled stats and
+      allocating them into what I believe are the 3 "good" stats for a given class.**/
 	counter = good_available_stats.size();
 	for (int i = 0; i < counter; i++)
 	{
 		int ins;
 		int roll;
-		//std::cout << "badStat contains:";
-		//for (unsigned i = 0; i < badStats.size(); ++i)
-		//	std::cout << ' ' << badStats[i];
-		//cout << endl;
-		//bad_stats[i] refers to each index that I labeled as a "bad stat" in the Class object.
+    /**If more than one stat remains available, then roll to see which one is allocated.**/
 		if (good_available_stats.size() != 1)
 		{
 			roll = rolldX(good_available_stats.size());
@@ -83,7 +80,10 @@ std::map<int,int> smart_stat_distribution(std::vector<int> bad_class_stats, std:
 		{
 			ins = good_available_stats.at(0);
 		}
+    /**Insert the pair <i, ins> into the map. The first value is in reference to the stat itself
+       the second is the value of said stat. An example is a Strength score of 16 would be <1,16>**/
 		stats_map.insert(std::pair<int, int>(good_class_stats.at(i), ins));
+    /**If there was more than one stat available, then erase where it was located.**/
 		if (good_available_stats.size() != 1)
 		{
 			good_available_stats.erase(good_available_stats.begin() + (roll - 1));
@@ -92,7 +92,6 @@ std::map<int,int> smart_stat_distribution(std::vector<int> bad_class_stats, std:
 		{
 			good_available_stats.erase(good_available_stats.begin());
 		}
-		//printf("Good Stat of %d is %d\n", i, statsRolled[rolled]);
 	}
 
 	return stats_map;
@@ -105,7 +104,7 @@ It is meant to adjust for alignment restrictions and therefore is called before 
 
 
 /*
-TODO: Create function that takes in all character information. Have it determine the number of Ability Point Raises (APR), then distribute said raises in a 
+TODO: Create function that takes in all character information. Have it determine the number of Ability Point Raises (APR), then distribute said raises in a
 	  random but "smart" fashion based on roughly 4 different options (1. Raise a "Good Stat" if the stat is odd (meaning bonus will increase) OR if you have more than one APR left 2. Raise a "bad stat" for the same reasons minus the OR 3. Raise CON if HD is greater than 6 (d8, d12) 4. Raise a random stat)
 	  These options will have percent chance such that options 1 and 4 are more likely than 2 or 3 (might just delete 3 honestly).
 	  Then if any rolls affect the CON bonus, a flag must be marked along with which level the CON bonus was changed (4, 8, 12 ...). When determining the HP gains, this flag must also be factored in, as
@@ -114,85 +113,7 @@ TODO: Create function that takes in all character information. Have it determine
 
 /*Section for Calculating other features of Character&*/
 
-/*
-The function determineStats attempts to take in the 6 randomly rolled numbers [3,18] and allocate them in a "smart" fashion.
-For the sake of complexity, each class is assumed to have 3 preferred stats, as well as 3 dump stats. 
-What this means is that the 3 highest values rolled will be allocated to a class's preferred stats (albeit at random), while remaining stats are allocated (again, at random) to the dump stats.
-This function is called by CharGen.cpp
-*/
 
-// void determineStats(struct Stats& statsList, struct Class& selectedClass, int* statsRolled) {
-// 	vector<int> prefStats;
-// 	std::vector<int> badStats;
-// 	std::map<int, int> statsMap;
-// 	for (int x = 0; x < 6; x++) {
-// 		if (x < 3) {
-// 			int ins = statsRolled[x];
-// 			badStats.push_back(ins);
-// 		}
-// 		else {
-// 			prefStats.push_back(statsRolled[x]);
-// 		}
-// 	}
-// 	//Handle allocation of bad stats
-// 	for (int i = 0; i < 3; i++) {
-// 		int ins;
-// 		int* roll;
-// 			//std::cout << "badStat contains:";
-// 			//for (unsigned i = 0; i < badStats.size(); ++i)
-// 			//	std::cout << ' ' << badStats[i];
-// 			//cout << endl;
-
-// 			if (badStats.size() != 1) {
-// 				roll = rollXdX(1, badStats.size());
-// 				ins = badStats.at(roll[0]-1);
-// 			}
-// 			else {
-// 				ins = badStats.at(0);
-// 			}
-// 			statsMap.insert(std::pair<int,int>(selectedClass.badStats[i],ins));
-// 			if (badStats.size() != 1) {
-// 				badStats.erase(badStats.begin() + (roll[0]-1));
-// 			}
-// 			else {
-// 				badStats.erase(badStats.begin());
-// 			}
-// 		//printf("Good Stat of %d is %d\n", i, statsRolled[rolled]);
-// 	}
-// 	//Handle allocation of good stats
-// 	for (int i = 0; i < 3; i++) {
-// 		int ins;
-// 		int* roll;
-// 		//std::cout << "Prefstat contains:";
-// 		//for (unsigned i = 0; i < prefStats.size(); ++i) {
-// 		//	std::cout << ' ' << prefStats[i];
-// 		//}
-// 		//cout << endl;
-
-// 		if (prefStats.size() != 1) {
-// 			roll = rollXdX(1, prefStats.size());
-// 			ins = prefStats.at(roll[0]-1);
-// 		}
-// 		else {
-// 			ins = prefStats.at(0);
-// 		}
-// 		statsMap.insert(std::pair<int,int>(selectedClass.goodStats[i],ins));
-// 		if (prefStats.size() != 1) {
-// 			prefStats.erase(prefStats.begin() + (roll[0]-1));
-// 		}
-// 		else {
-// 			prefStats.erase(prefStats.begin());
-// 		}
-// 	}
-	
-// 	statsList.str = statsMap.at(1);
-// 	statsList.dex = statsMap.at(2);
-// 	statsList.con = statsMap.at(3);
-// 	statsList.intl = statsMap.at(4);
-// 	statsList.wis = statsMap.at(5);
-// 	statsList.cha = statsMap.at(6);
-
-// }
 
 /*
 The function calcAgeWeightHeight uses a combination of character information and the user-specified class to modify their characters height, weight and age.
@@ -201,38 +122,6 @@ Thus once the age is calculated it must also be checked against a threshold to d
 This function is called in CharGen.cpp
 */
 
-/*
-This function is called to determine the bonus attributed to a given stat value.
-This function is called by printCharInfo and calcHitPoints located in utilsDnD.cpp
-*/
-
-// int get_ability_stat(std::string stat, Stats stat_list)
-// {
-// 	if (!strcmp(stat.c_str(), "strength"))
-// 	{
-// 		return stat_list.str;
-// 	}
-// 	if (!strcmp(stat.c_str(), "dexterity"))
-// 	{
-// 		return stat_list.dex;
-// 	}
-// 	if (!strcmp(stat.c_str(), "constitution"))
-// 	{
-// 		return stat_list.con;
-// 	}
-// 	if (!strcmp(stat.c_str(), "intelligence"))
-// 	{
-// 		return stat_list.intl;
-// 	}
-// 	if (!strcmp(stat.c_str(), "wisdom"))
-// 	{
-// 		return stat_list.wis;
-// 	}
-// 	if (!strcmp(stat.c_str(), "charisma"))
-// 	{
-// 		return stat_list.cha;
-// 	}
-// }
 /*
 The function determineNumAbilityPoints is called when determining how many ability points should be granted to a player
 based on their level. Every 4 levels grants the player one extra ability point which will be allocated into the six main stats
@@ -323,19 +212,19 @@ the raw HP value per level is randomly rolled, and the appropriate CON Bonus is 
 
 // 		if(!strcmp(sk.ability_modifier.c_str(),"strength")){
 // 			ability_bonus = determineBonus(statsList.str);
-// 		} 
+// 		}
 // 		if(!strcmp(sk.ability_modifier.c_str(),"dexterity")){
 // 			ability_bonus = determineBonus(statsList.dex);
-// 		} 
+// 		}
 // 		if(!strcmp(sk.ability_modifier.c_str(),"constitution")){
 // 			ability_bonus = determineBonus(statsList.con);
-// 		} 
+// 		}
 // 		if(!strcmp(sk.ability_modifier.c_str(),"intelligence")){
 // 			ability_bonus = determineBonus(statsList.intl);
-// 		} 
+// 		}
 // 		if(!strcmp(sk.ability_modifier.c_str(),"wisdom")){
 // 			ability_bonus = determineBonus(statsList.wis);
-// 		} 
+// 		}
 // 		if(!strcmp(sk.ability_modifier.c_str(),"charisma")){
 // 			ability_bonus = determineBonus(statsList.cha);
 // 		}
@@ -401,4 +290,3 @@ the raw HP value per level is randomly rolled, and the appropriate CON Bonus is 
 // 	cout << "Charisma: " << statList.cha << " (" << std::showpos << chaBonus << ") " << std::noshowpos << endl;
 // 	cout << endl;
 // }
-
