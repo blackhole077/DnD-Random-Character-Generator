@@ -1,9 +1,9 @@
 #include "..\headers\Feats.h"
 using namespace std;
 
-Feats::Feats(std::string arg_name, std::string arg_description, std::string arg_special_notes="",bool is_multiple_allowed = false, const std::vector<std::pair<std::string,int>> arg_required_stats = {}, const std::vector<Feats> arg_required_feats, const std::vector<std::string> arg_required_classes, int arg_required_base_attack_bonus = 0){
+Feats::Feats(std::string arg_name, std::string arg_normal_notes, std::string arg_special_notes="",bool is_multiple_allowed = false, const std::vector<std::pair<std::string,int>> arg_required_stats = {}, const std::vector<Feats> arg_required_feats, const std::vector<std::string> arg_required_classes, int arg_required_base_attack_bonus = 0){
     std::string name = arg_name;
-    std::string description = arg_description;
+    std::string normal_notes = arg_normal_notes;
     std::string special_notes = arg_special_notes;
     bool multiple_allowed = is_multiple_allowed;
     std::vector<std::pair<std::string,int>> required_stats(arg_requiredstats);
@@ -18,8 +18,8 @@ std::string Feats::get_name() const{
     return name;
 }
 
-std::string Feats::get_description() const{
-    return description;
+std::string Feats::get_normal_notes() const{
+    return normal_notes;
 }
 
 std::string Feats::get_special_notes() const{
@@ -50,8 +50,8 @@ int Feats::get_required_base_attack_bonus() const{
 void Feats::set_name(std::string x){
     this->name = x;
 }
-void Feats::set_description(std::string x){
-    this->description = x;
+void Feats::set_normal_notes(std::string x){
+    this->normal_notes = x;
 }
 void Feats::set_special_notes(std::string x){
     this->special_notes = x;

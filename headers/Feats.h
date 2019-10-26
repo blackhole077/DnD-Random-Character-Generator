@@ -12,7 +12,7 @@ class Feats
 private:
     //VARIABLES
     std::string name;
-    std::string description;
+    std::string normal_notes;
     std::string special_notes;
     bool multiple_allowed;
     std::vector<std::pair<std::string,int>> required_stats;
@@ -21,7 +21,7 @@ private:
     int required_bab;
     //SETTERS
     void set_name(std::string arg_name);
-    void set_description(std::string arg_description);
+    void set_normal_notes(std::string arg_normal_notes);
     void set_special_notes(std::string arg_special_notes);
     void set_multiple_allowed(bool arg_multiple_allowed);
     void set_required_stats(std::vector<std::pair<std::string,int>> arg_required_stats);
@@ -31,10 +31,10 @@ private:
 
 public: 
     //CONSTRUCTOR
-    Feats(std::string arg_name, std::string arg_description, std::string arg_special_notes="",bool is_multiple_allowed = false, const std::vector<std::pair<std::string,int>> arg_required_stats = {}, const std::vector<Feats> arg_required_feats, const std::vector<string> arg_required_classes, int arg_required_base_attack_bonus = 0);
+    Feats(std::string arg_name, std::string arg_normal_notes, std::string arg_special_notes="",bool is_multiple_allowed = false, const std::vector<std::pair<std::string,int>> arg_required_stats = {}, const std::vector<Feats> arg_required_feats, const std::vector<string> arg_required_classes, int arg_required_base_attack_bonus = 0);
     //GETTERS
     std::string get_name() const;
-    std::string get_description() const;
+    std::string get_normal_notes() const;
     std::string get_special_notes() const;
     bool is_multiple_allowed() const;
     std::vector<std::pair<std::string,int>> get_required_stats() const;
