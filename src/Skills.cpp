@@ -16,5 +16,6 @@ int Skills::initialize_all_skills(){
   this->skills_ranks_and_bonuses = malloc(sizeof(int) * (num_skills * num_cols));
   ifstream file_data;
   file_data.open("..\\data\\skills_list.txt");
+
   return 0;
 }
