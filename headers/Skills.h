@@ -28,7 +28,10 @@ private:
   int initialze_skill_ranks_and_bonuses(int *skills_ranks_and_bonuses);
 public:
   Skills();
-  int initialize_all_skills(Skills skill);
+  /**Initializes a static instance of ALL skills available in the base version of Dungeons & Dragons v3.5
+     As it assumes a static instance, the assumption is 45 skills (Knowledge is expanded to be 9 separate skills)
+     and 4 columns to represent ranks and their various modifiers.**/
+  int initialize_all_skills();
 
   //Getters
   std::vector<std::string> get_all_skill_names() const;
