@@ -1,5 +1,4 @@
-#include "..\headers\dnd_template_functions.h"
-#include <iostream>
+#include "../headers/dnd_template_functions.h"
 using namespace std;
 
 template <typename T>
@@ -42,10 +41,6 @@ int rollXdX(const int numDie, const int numFace)
 	for (int i = 0; i < numDie; i++)
 	{
 		sum += die(rd);
-		//std::printf("roll is %d\n",rolls[i]);
-		// rand() isn't truely random, homie
-		// it will probably output 1 more often than you expect
-		// use a uniform distribution function
 	}
 
 	return sum;

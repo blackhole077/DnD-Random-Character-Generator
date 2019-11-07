@@ -1,10 +1,8 @@
 #ifndef SKILLS_H
 #define SKILLS_H
 #include "Race.h"
-#include "Stats.h"
+// #include "Stats.h"
 #include <vector>
-#include <string>
-#include <cstring>
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>

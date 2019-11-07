@@ -1,4 +1,4 @@
-#include "..\headers\roll.h"
+#include "../headers/roll.h"
 using namespace std;
 
 // this sets up a static distribution for the cdf, lowering time issues
@@ -65,6 +65,6 @@ int weighted_distribution(vector<int> weights)
 		}
 		rnd -= comparison;
 	}
-	_ASSERT(!"should never get here");
+	assert (!"should never get here");
 	return -1;
 }
