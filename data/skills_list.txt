@@ -1,4 +1,4 @@
-45,4
+44,4
 appraise,intelligence,False
 balance,dexterity,False
 climb,strength,False

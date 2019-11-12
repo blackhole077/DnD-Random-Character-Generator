@@ -15,7 +15,7 @@ private:
   std::vector<std::string> skill_ability_modifiers;
   std::vector<bool> skill_training_required;
   /**45 skills with 4 columns: Total Skill Rank, Base Ranks (The player directly modifies this), Ability Modifier, Miscellaneous Modifiers (The player indirectly modifies this)**/
-  /**For simplicity, I'll change this to be a 1-D array containing (num_skills * num_cols) elements (i.e. 45*4 = 180 elements).
+  /**For simplicity, I'll change this to be a 1-D array containing (num_skills * num_cols) elements (i.e. 44*4 = 176 elements).
      Also, I'll just have the constructor malloc the memory for the array instead of making it static to avoid potential maintenance issues.**/
   // int skills_ranks_and_bonuses[45][4];
   int *skills_ranks_and_bonuses;
@@ -27,7 +27,7 @@ private:
 public:
   Skills();
   /**Initializes a static instance of ALL skills available in the base version of Dungeons & Dragons v3.5
-     As it assumes a static instance, the assumption is 45 skills (Knowledge is expanded to be 9 separate skills)
+     As it assumes a static instance, the assumption is 44 skills (Knowledge is expanded to be 9 separate skills)
      and 4 columns to represent ranks and their various modifiers.**/
   int initialize_all_skills();
 

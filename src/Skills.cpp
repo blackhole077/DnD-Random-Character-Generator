@@ -10,12 +10,10 @@ Skills::Skills(){
 }
 
 int Skills::initialize_all_skills(){
-  // this->num_skills = 45;
-  // this->num_cols = 4;
-  this->skills_ranks_and_bonuses = (int*) malloc(sizeof(int) * (num_skills * num_columns));
   std::ifstream file_data ("data/skills_list.txt", std::ios::in);
+  /**Error handling (will be moved in the future)**/
   if(!file_data.is_open()){
-    std::cout << "failure to open file. ending." << std::endl;
+    std::cout << "File failed to open." << std::endl;
     return 1;
   }
   /**Fetch the first line, which gets the number of skills and number of columns **/
@@ -30,6 +28,27 @@ int Skills::initialize_all_skills(){
   /**Assign the values for future use**/
   std::cout << "Number of skills: " << this->num_skills << std::endl;
   std::cout << "Number of cols: " << this->num_columns << std::endl;
+  /**Malloc the appropriate amount of memory for future use**/
+  this->skills_ranks_and_bonuses = (int*) malloc(sizeof(int) * (num_skills * num_columns));
+  /**Begin reading in all lines and separating them into their respective data structures**/
+  for(int i = 0; i < num_skills; i++){
+    std::getline(file_data,line);
+    dup = strdup(line.c_str());
+    tok = std::strtok(dup,",");
+    this->skill_names.push_back(tok);
+    tok=std::strtok(NULL,",");
+    this->skill_ability_modifiers.push_back(tok);
+    tok=std::strtok(NULL,",");
+    /**Since C++ doesn't have an inherent conversion from string to bool, we use a conditional instead**/
+    if(!strcmp(tok,"True")){
+      this->skill_training_required.push_back(true);
+    }
+    else{
+      this->skill_training_required.push_back(false);
+    }
+  }
+  printVector(this->skill_names);
+
   //Free the duplicate
   free(dup);
   //Close the file

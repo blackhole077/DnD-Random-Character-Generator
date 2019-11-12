@@ -1,12 +1,6 @@
 #include "../headers/dnd_template_functions.h"
 using namespace std;
 
-template <typename T>
-void printElement(T t, const int &num_width, const char &separator)
-{
-	cout << left << setw(num_width) << setfill(separator) << t;
-}
-
 std::vector<int> operator+(const std::vector<int> &a, const std::vector<int> &b)
 {
 	std::vector<int> result;
