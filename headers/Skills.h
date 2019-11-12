@@ -26,10 +26,20 @@ private:
   int initialze_skill_ranks_and_bonuses(int *skills_ranks_and_bonuses);
 public:
   Skills();
+
   /**Initializes a static instance of ALL skills available in the base version of Dungeons & Dragons v3.5
      As it assumes a static instance, the assumption is 44 skills (Knowledge is expanded to be 9 separate skills)
      and 4 columns to represent ranks and their various modifiers.**/
   int initialize_all_skills();
+
+  /*
+  If it's a class skill it's character level + 3
+  if not it's 1/2 (no rounding) of character level + 3.
+  Important note, skills CAN increment in 1/2 ranks. However,
+  any 1/2 rank has no bearing on the skill it's tied to.
+  Thus, 3.5 ranks in a skill means only +3 is used.
+  */
+  double get_skill_cap(int level, bool is_class_skill) const;
 
   //Getters
   std::vector<std::string> get_all_skill_names() const;
@@ -38,7 +48,14 @@ public:
   std::string get_skill_ability_modifier(int index) const;
 
   int *get_all_skill_ranks_and_bonuses() const;
-  int* get_skill_ranks_and_bonuses(int index) const;
+  
+  /**Return the skill ranks and bonuses for a specific skill.
+     Because of the design as a 1-D array version of what is
+     effectively a 2-D array, this function has to return a
+     range from a given index. The parameter will assume the
+     2-D structure, meaning if you want the 3rd skill, then
+     the parameter should be 3, instead of 12.**/
+  int* get_skill_ranks_and_bonuses(int row_index);
 
 };
 

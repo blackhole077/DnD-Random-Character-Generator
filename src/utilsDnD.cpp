@@ -149,15 +149,6 @@ the raw HP value per level is randomly rolled, and the appropriate CON Bonus is 
 // 	character.totalHP += ((determineBonus(conScore))*numRoll);
 // }
 
-// int getSkillCap(Character& character){
-// 	/*
-// 	If it's a class skill it's character level + 3
-// 	if not it's 1/2 (no rounding) of character level + 3.
-// 	*/
-// 	int lvl = character.effectiveLevel;
-// 	return lvl+3;
-// }
-
 // int updateSkills(vector<Skill> &skill_list, int skp, int rank_cap){
 // 	for (auto x : skill_list)
 // 	{

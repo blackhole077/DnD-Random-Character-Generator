@@ -47,11 +47,46 @@ int Skills::initialize_all_skills(){
       this->skill_training_required.push_back(false);
     }
   }
-  printVector(this->skill_names);
+  // printVector(this->skill_names);
 
   //Free the duplicate
   free(dup);
   //Close the file
   file_data.close();
   return 0;
+}
+
+double get_skill_cap(int level, bool is_class_skill) const{
+	return (is_class_skill) ? level+3 : (level+3)/2.0;
+}
+
+std::vector<std::string> get_all_skill_names() const{
+  return skill_names;
+}
+std::string get_skill_name(int index) const{
+  return skill_names.at(index);
+}
+
+std::vector<std::string> get_all_skill_ability_modifiers() const{
+  return skill_ability_modifiers;
+}
+
+std::string get_skill_ability_modifier(int index) const{
+  return skill_ability_modifiers.at(index);
+}
+
+int *get_all_skill_ranks_and_bonuses() const{
+  return skills_ranks_and_bonuses;
+}
+
+int* get_skill_ranks_and_bonuses(int row_index){
+  if(row_index < 0 || (row_index*4) > (sizeof(skills_ranks_and_bonuses) / sizeof(skills_ranks_and_bonuses[0]))/4){
+    return NULL;
+  }
+  int *skill_row = malloc(sizeof(int) * 4);
+  int i;
+  for(i=0;i<4;i++){
+    skill_row[i] = skills_ranks_and_bonuses[((row_index*4)+i)];
+  }
+  return skill_row;
 }
