@@ -22,8 +22,6 @@ void determineAlignment(Class selectedClass, Character character);
 
 void calcHitPoints(Class selectedClass, Character character, Stats statlist);
 
-int getSkillCap(Character character);
-
 //int updateSkills(std::vector<Skill> skill_list, int skp, int rank_cap);
 
 int get_ability_stat(std::string stat, Stats stat_list);

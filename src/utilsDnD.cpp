@@ -131,9 +131,6 @@ int determineNumAbilityPoints(int level) {
 	int number = floor(level / 4);
 	return number;
 }
-int determineNumSkillPoints(int level, int base_gain, int int_modifier){
-	return ((base_gain+int_modifier)*4)+((base_gain+int_modifier)*(level-1));
-}
 /*
 calcHitPoints is utilized in determining the HP of the character-to-be. Using the ECL (Effective Character Level) and HD (Hit Die) of the class,
 the raw HP value per level is randomly rolled, and the appropriate CON Bonus is applied at each level.
