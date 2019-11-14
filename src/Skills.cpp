@@ -60,6 +60,10 @@ double get_skill_cap(int level, bool is_class_skill) const{
 	return (is_class_skill) ? level+3 : (level+3)/2.0;
 }
 
+int determine_number_of_skill_points(int level, int base_gain, int int_modifier){
+	return ((base_gain+int_modifier)*4)+((base_gain+int_modifier)*(level-1));
+}
+
 std::vector<std::string> get_all_skill_names() const{
   return skill_names;
 }

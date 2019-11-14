@@ -41,6 +41,15 @@ public:
   */
   double get_skill_cap(int level, bool is_class_skill) const;
 
+  /**
+  Get the number of skill points a character has available to them.
+  This does not assume anything about race (as Human does get extra)
+  to avoid complexity. Furthermore, this does not retroactively apply
+  additional skill points that would be gained if a character's INT
+  modifier increases.
+  **/
+  int determine_number_of_skill_points(int level, int base_gain, int int_modifier);
+
   //Getters
   std::vector<std::string> get_all_skill_names() const;
   std::string get_skill_name(int index) const;
@@ -48,7 +57,7 @@ public:
   std::string get_skill_ability_modifier(int index) const;
 
   int *get_all_skill_ranks_and_bonuses() const;
-  
+
   /**Return the skill ranks and bonuses for a specific skill.
      Because of the design as a 1-D array version of what is
      effectively a 2-D array, this function has to return a
