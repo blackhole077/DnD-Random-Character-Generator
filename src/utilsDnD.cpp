@@ -19,11 +19,6 @@
 #include "..\headers\Race.h"
 using namespace std;
 
-template<typename T> void printElement(T t, const int& num_width, const char& separator)
-{
-    cout << left << setw(num_width) << setfill(separator) << t;
-}
-
 /*
 The purpose of determineRace is to randomly select the race of the generated character-to-be.
 Since we would want each race to be equally likely as the next, a uniform distribution is utilized.
@@ -153,11 +148,17 @@ the raw HP value per level is randomly rolled, and the appropriate CON Bonus is 
      The number of ranks placed either way is determined by a Poisson distribution, with the
      lambda value (expected number of occurrences) being the median of [0, min((skill_cap - current_skill_level),0)].
      Keep in mind skill_cap is halved for non-class skills.
-
     1a. If a non-class skill is chosen, then first check if any ranks are placed (binomial distribution; 0.2 success)
         If zero is chosen, then return to step 1.
-
+    ALTERNATE METHOD:
+      1. Change the Poisson Distribution to have a lambda value of median(0,skill_cap) or median(0,(skill_cap)/2)
+      2. Select a skill via weighted distribution
+      3. Apply ranks equal to min((skill_cap - current_skill_level), ranks_to_apply) and decrement by same amount.
 **/
+int update_skills(int usable_points, Skills &skill_list){
+
+return 0;
+}
 // int updateSkills(vector<Skill> &skill_list, int skp, int rank_cap){
 // 	for (auto x : skill_list)
 // 	{
