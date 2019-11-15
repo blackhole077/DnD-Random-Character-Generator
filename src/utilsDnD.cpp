@@ -145,7 +145,19 @@ the raw HP value per level is randomly rolled, and the appropriate CON Bonus is 
 // 		character.totalHP += r;
 // 	character.totalHP += ((determineBonus(conScore))*numRoll);
 // }
+/**Steps for leveling up skills per level
+  0. Determine if character will spend a skill point to learn a langauge
+    0a. If yes, call a different function and then come back to this with 1 less skill point
+    0b. If not, continue;
+  1. Determine if the skill chosen is going to be a class skill or not (binomial distribution)
+     The number of ranks placed either way is determined by a Poisson distribution, with the
+     lambda value (expected number of occurrences) being the median of [0, min((skill_cap - current_skill_level),0)].
+     Keep in mind skill_cap is halved for non-class skills.
 
+    1a. If a non-class skill is chosen, then first check if any ranks are placed (binomial distribution; 0.2 success)
+        If zero is chosen, then return to step 1.
+
+**/
 // int updateSkills(vector<Skill> &skill_list, int skp, int rank_cap){
 // 	for (auto x : skill_list)
 // 	{
