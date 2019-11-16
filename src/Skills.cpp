@@ -159,7 +159,7 @@ double* Skills::get_skill_ranks_and_bonuses(int row_index){
   if(row_index < 0 || (row_index*4) > (sizeof(skills_ranks_and_bonuses) / sizeof(skills_ranks_and_bonuses[0]))/4){
     return NULL;
   }
-  double *skill_row = malloc(sizeof(int) * 4);
+  double *skill_row = malloc(sizeof(double) * 4);
   int i;
   for(i=0;i<4;i++){
     skill_row[i] = skills_ranks_and_bonuses[((row_index*4)+i)];
