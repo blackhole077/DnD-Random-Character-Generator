@@ -1,3 +1,5 @@
+#ifndef DND_TEMPLATE_FUNCTIONS_H
+#define DND_TEMPLATE_FUNCTIONS_H
 #include<random>
 #include<vector>
 #include<map>
@@ -28,7 +30,7 @@ void printVectorInVector(const T& t) {
 
 template<typename T>
 bool contains(std::vector<T> &vector_of_items, const T &element){
-	return std::find(vector_of_items.begin(), vector_of_items.end(), element) != vector_of_items.end()
+	return std::find(vector_of_items.begin(), vector_of_items.end(), element) != vector_of_items.end();
 }
 
 std::vector<int> operator+(const std::vector<int>& a, const std::vector<int>& b);
@@ -38,3 +40,4 @@ std::map<int,int> smart_stat_distribution(std::vector<int> bad_class_stats, std:
 int cdfRoll();
 int rollXdX(const int numDie, const int numFace);
 int rolldX(const int numFace);
+#endif

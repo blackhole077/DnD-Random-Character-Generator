@@ -1,14 +1,14 @@
 #include "../headers/Skills.h"
 
 Skills::Skills(){
-  int num_skills;
-  int num_columns;
+  int num_skills = 0;
+  int num_columns = 0;
   std::vector<std::string> skill_names;
   std::vector<std::string> skill_ability_modifiers;
   std::vector<bool> skill_training_required;
   std::vector<int> class_skill_indices;
   std::vector<int> non_class_skill_indices;
-  double *skills_ranks_and_bonuses;
+  double *skills_ranks_and_bonuses = NULL;
 }
 
 /**Constructor/Initializer**/
@@ -62,7 +62,7 @@ int Skills::initialize_all_skills(){
 
 /**Miscellaneous/Auxillary Functions**/
 
-double get_skill_cap(int level, bool is_class_skill) const{
+double get_skill_cap(int level, bool is_class_skill){
 	return (is_class_skill) ? level+3 : (level+3)/2.0;
 }
 
@@ -72,7 +72,7 @@ int determine_number_of_skill_points(int level, int base_gain, int int_modifier)
 
 /**Setters (outside of Constructor)**/
 
-void set_non_class_skills(std::string class_name){
+void Skills::set_class_skills(std::string class_name){
   if(class_name.empty()){
     return;
   }
@@ -115,13 +115,13 @@ void set_non_class_skills(std::string class_name){
 
 }
 
-void manual_set_class_skills(std::vector<int> class_skill_indices){
+void Skills::manual_set_class_skills(std::vector<int> class_skill_indices){
   this->class_skill_indices = std::move(class_skill_indices);
 }
 
-void set_non_class_skills(std::vector<int> class_skill_indices, int num_skills){
+void Skills::set_non_class_skills(std::vector<int> class_skill_indices, int num_skills){
   if(class_skill_indices.empty() || num_skills < 0){
-    return 1;
+    return;
   }
 
   int i;
@@ -130,32 +130,32 @@ void set_non_class_skills(std::vector<int> class_skill_indices, int num_skills){
       this->non_class_skill_indices.push_back(i);
     }
   }
-  return 0;
+  return;
 }
 
 /**Getters**/
 
-std::vector<std::string> get_all_skill_names() const{
+std::vector<std::string> Skills::get_all_skill_names() const{
   return skill_names;
 }
 
-std::string get_skill_name(int index) const{
+std::string Skills::get_skill_name(int index) const{
   return skill_names.at(index);
 }
 
-std::vector<std::string> get_all_skill_ability_modifiers() const{
+std::vector<std::string> Skills::get_all_skill_ability_modifiers() const{
   return skill_ability_modifiers;
 }
 
-std::string get_skill_ability_modifier(int index) const{
+std::string Skills::get_skill_ability_modifier(int index) const{
   return skill_ability_modifiers.at(index);
 }
 
-double *get_all_skill_ranks_and_bonuses() const{
+double* Skills::get_all_skill_ranks_and_bonuses() const{
   return skills_ranks_and_bonuses;
 }
 
-double* get_skill_ranks_and_bonuses(int row_index){
+double* Skills::get_skill_ranks_and_bonuses(int row_index){
   if(row_index < 0 || (row_index*4) > (sizeof(skills_ranks_and_bonuses) / sizeof(skills_ranks_and_bonuses[0]))/4){
     return NULL;
   }

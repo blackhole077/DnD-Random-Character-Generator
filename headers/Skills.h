@@ -38,7 +38,7 @@ public:
   any 1/2 rank has no bearing on the skill it's tied to.
   Thus, 3.5 ranks in a skill means only +3 is used.
   */
-  double get_skill_cap(int level, bool is_class_skill) const;
+  double get_skill_cap(int level, bool is_class_skill);
 
   void manual_set_class_skills(std::vector<int> class_skill_indices);
   void set_non_class_skills(std::vector<int> class_skill_indices, int num_skills);
