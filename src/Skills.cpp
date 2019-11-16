@@ -77,37 +77,37 @@ void set_non_class_skills(std::string class_name){
     return;
   }
   if(!class_name.compare("Barbarian")){
-    this->class_skill_indices = {2,4,12,15,16,27,32,39,40};
+    this->class_skill_indices = {3,5,13,16,17,28,33,40,41};
   }
   else if(!class_name.compare("Bard")){
-    //Bard
+    this->class_skill_indices = {0,1,2,3,4,5,6,7,9,10,12,15,17,18,19,20,21,22,23,24,25,26,27,28,29,31,32,35,36,38,41,42,43};
   }
   else if(!class_name.compare("Cleric")){
-    //Cleric
+    this->class_skill_indices = {4,5,7,14,18,22,26,27,34,38};
   }
   else if(!class_name.compare("Druid")){
-    //Druid
+    this->class_skill_indices = {4,5,7,13,14,24,28,32,33,38,39,40,41};
   }
   else if(!class_name.compare("Fighter")){
-    //Fighter
+    this->class_skill_indices = {3,5,13,16,17,33,41};
   }
   else if(!class_name.compare("Monk")){
-    //Monk
+    this->class_skill_indices = {1,3,4,5,7,10,14,25,32,33,35};
   }
   else if(!class_name.compare("Paladin")){
-    //Paladin
+    this->class_skill_indices = {4,5,7,13,15,17,18,26,28,29,31,35,39,41,42};
   }
   else if(!class_name.compare("Ranger")){
-    //Ranger
+        this->class_skill_indices = {3,4,5,13,14,15,17,20,21,24,28,29,31,33,34,39,40,41,44};
   }
   else if(!class_name.compare("Rogue")){
-    //Rogue
+    this->class_skill_indices = {0,1,2,3,5,6,7,8,9,10,11,12,15,16,17,23,28,29,30,31,34,35,36,39,41,42,43,44};
   }
   else if(!class_name.compare("Sorcerer")){
-    //Sorcerer
+    this->class_skill_indices = {2,4,5,18,32,38};
   }
   else if(!class_name.compare("Wizard")){
-    //Wizard
+    this->class_skill_indices = {4,5,6,18,19,20,21,22,23,24,25,26,27,32,38};
   }
   else{
     return;

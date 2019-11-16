@@ -1,6 +1,7 @@
-44,4
+45,4
 appraise,intelligence,False
 balance,dexterity,False
+bluff,charisma,False
 climb,strength,False
 concentration,constitution,False
 craft,intelligence,False
