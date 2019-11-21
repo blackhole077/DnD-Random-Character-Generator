@@ -13,6 +13,8 @@ private:
   std::vector<std::string> skill_names;
   std::vector<std::string> skill_ability_modifiers;
   std::vector<bool> skill_training_required;
+  std::vector<int> class_skill_indices;
+  std::vector<int> non_class_skill_indices;
   /**45 skills with 4 columns: Total Skill Rank, Base Ranks (The player directly modifies this), Ability Modifier, Miscellaneous Modifiers (The player indirectly modifies this)**/
   /**For simplicity, I'll change this to be a 1-D array containing (num_skills * num_cols) elements (i.e. 44*4 = 176 elements).
      Also, I'll just have the constructor malloc the memory for the array instead of making it static to avoid potential maintenance issues.**/
@@ -39,6 +41,9 @@ public:
   Thus, 3.5 ranks in a skill means only +3 is used.
   */
   double get_skill_cap(int level, bool is_class_skill);
+  void print_class_skills();
+
+  void set_class_skills(std::string class_name);
 
   void manual_set_class_skills(std::vector<int> class_skill_indices);
   void set_non_class_skills(std::vector<int> class_skill_indices, int num_skills);
@@ -57,6 +62,8 @@ public:
   std::string get_skill_name(int index) const;
   std::vector<std::string> get_all_skill_ability_modifiers() const;
   std::string get_skill_ability_modifier(int index) const;
+  std::vector<int> get_class_skill_indices() const;
+  std::vector<int> get_non_class_skill_indices() const;
 
   double *get_all_skill_ranks_and_bonuses() const;
 

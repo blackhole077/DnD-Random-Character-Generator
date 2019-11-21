@@ -33,7 +33,8 @@ int Skills::initialize_all_skills(){
   std::cout << "Number of skills: " << this->num_skills << std::endl;
   std::cout << "Number of cols: " << this->num_columns << std::endl;
   /**Malloc the appropriate amount of memory for future use**/
-  this->skills_ranks_and_bonuses = (double*) malloc(sizeof(double) * (num_skills * num_columns));
+  this->skills_ranks_and_bonuses = (double*) malloc(sizeof(double) * (this->num_skills * this->num_columns));
+
   /**Begin reading in all lines and separating them into their respective data structures**/
   for(int i = 0; i < num_skills; i++){
     std::getline(file_data,line);
@@ -69,6 +70,26 @@ double get_skill_cap(int level, bool is_class_skill){
 int determine_number_of_skill_points(int level, int base_gain, int int_modifier){
 	return ((base_gain+int_modifier)*4)+((base_gain+int_modifier)*(level-1));
 }
+
+void Skills::print_class_skills(){
+	printElement("Skill",30,' ');
+	printElement("Key Ability", 16, ' ');
+  printElement("Ranks",6,' ');
+  printElement("Ability Modifier",21,' ');
+	printElement("Skill Modifier",19,' ');
+	std::cout << std::endl;
+  double *skill_row;
+  for(auto x : this->class_skill_indices){
+    skill_row = get_skill_ranks_and_bonuses(x);
+		printElement(this->skill_names.at(x),30,' ');
+		printElement(this->skill_ability_modifiers.at(x),16,' ');
+    printElement(skill_row[1],5,' ');
+    printElement(skill_row[2],21,' ');
+		printElement(skill_row[3],19,' ');
+		std::cout << std::endl;
+  }
+}
+
 
 /**Setters (outside of Constructor)**/
 
@@ -151,18 +172,29 @@ std::string Skills::get_skill_ability_modifier(int index) const{
   return skill_ability_modifiers.at(index);
 }
 
+std::vector<int> Skills::get_class_skill_indices() const{
+  return this->class_skill_indices;
+}
+
+std::vector<int> Skills::get_non_class_skill_indices() const{
+  return this->non_class_skill_indices;
+}
+
 double* Skills::get_all_skill_ranks_and_bonuses() const{
-  return skills_ranks_and_bonuses;
+  return this->skills_ranks_and_bonuses;
 }
 
 double* Skills::get_skill_ranks_and_bonuses(int row_index){
-  if(row_index < 0 || (row_index*4) > (sizeof(skills_ranks_and_bonuses) / sizeof(skills_ranks_and_bonuses[0]))/4){
-    return NULL;
-  }
-  double *skill_row = malloc(sizeof(double) * 4);
+  double *skill_row = (double*)malloc(sizeof(double) * 4);
   int i;
+  if(row_index < 0 || (row_index*4) > ((this->num_skills * this->num_columns) - 4)){
+    for(i=0;i<4;i++){
+      skill_row[i] = -1;
+    }
+    return skill_row;
+  }
   for(i=0;i<4;i++){
-    skill_row[i] = skills_ranks_and_bonuses[((row_index*4)+i)];
+    skill_row[i] = this->skills_ranks_and_bonuses[((row_index*4)+i)];
   }
   return skill_row;
 }
