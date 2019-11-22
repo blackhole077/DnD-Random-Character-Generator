@@ -19,18 +19,35 @@ void printElement(T t, const int &num_width, const char &separator)
 }
 
 template<typename T>
-void printVector(const T& t) {
+void printVector(const std::vector<T> &t) {
 	std::copy(t.cbegin(), t.cend(), std::ostream_iterator<typename T::value_type>(std::cout, ", "));
 }
 
 template<typename T>
-void printVectorInVector(const T& t) {
+void printVectorInVector(const std::vector<std::vector<T>> &t) {
 	std::for_each(t.cbegin(), t.cend(), printVector<typename T::value_type>);
 }
 
 template<typename T>
 bool contains(std::vector<T> &vector_of_items, const T &element){
 	return std::find(vector_of_items.begin(), vector_of_items.end(), element) != vector_of_items.end();
+}
+
+template<typename T>
+void combine(std::vector<T> &vector_A, std::vector<T> &vector_B){
+	if(vector_B.empty()){
+		return;
+	}
+	else if(vector_A.empty()){
+		vector_A = std::move(vector_B);
+	}
+	else{
+		for(auto x : vector_B){
+			if(!contains(vector_A, x)){
+				vector_A.push_back(x);
+			}
+		}
+	}
 }
 
 std::vector<int> operator+(const std::vector<int>& a, const std::vector<int>& b);

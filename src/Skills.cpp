@@ -1,5 +1,7 @@
 #include "../headers/Skills.h"
 
+/**Constructor/Initializer**/
+
 Skills::Skills(){
   int num_skills = 0;
   int num_columns = 0;
@@ -10,8 +12,6 @@ Skills::Skills(){
   std::vector<int> non_class_skill_indices;
   double *skills_ranks_and_bonuses = NULL;
 }
-
-/**Constructor/Initializer**/
 
 int Skills::initialize_all_skills(){
   std::ifstream file_data ("data/skills_list.txt", std::ios::in);
@@ -137,7 +137,15 @@ void Skills::set_class_skills(std::string class_name){
 }
 
 void Skills::manual_set_class_skills(std::vector<int> class_skill_indices){
-  this->class_skill_indices = std::move(class_skill_indices);
+  if(class_skill_indices.empty()){
+    return;
+  }
+  if(this->class_skill_indices.empty()){
+    this->class_skill_indices = std::move(class_skill_indices);
+  }
+  else{
+    combine(this->class_skill_indices, class_skill_indices);
+  }
 }
 
 void Skills::set_non_class_skills(std::vector<int> class_skill_indices, int num_skills){
@@ -157,11 +165,18 @@ void Skills::set_non_class_skills(std::vector<int> class_skill_indices, int num_
 /**Getters**/
 
 std::vector<std::string> Skills::get_all_skill_names() const{
-  return skill_names;
+  return this->skill_names;
 }
 
 std::string Skills::get_skill_name(int index) const{
-  return skill_names.at(index);
+  std::string result;
+  try{
+    result = skill_names.at(index);
+  }
+  catch(const std::out_of_range &e){
+    result = "(null)";
+  }
+  return result;
 }
 
 std::vector<std::string> Skills::get_all_skill_ability_modifiers() const{
@@ -169,15 +184,32 @@ std::vector<std::string> Skills::get_all_skill_ability_modifiers() const{
 }
 
 std::string Skills::get_skill_ability_modifier(int index) const{
-  return skill_ability_modifiers.at(index);
+  std::string result;
+  try{
+    result = skill_ability_modifiers.at(index);
+  }
+  catch(const std::out_of_range &e){
+    result = "(null)";
+  }
+  return result;
 }
 
 std::vector<int> Skills::get_class_skill_indices() const{
-  return this->class_skill_indices;
+  if(this->class_skill_indices.empty()){
+    return {};
+  }
+  else{
+    return this->class_skill_indices;
+  }
 }
 
 std::vector<int> Skills::get_non_class_skill_indices() const{
-  return this->non_class_skill_indices;
+  if(this->non_class_skill_indices.empty()){
+    return {};
+  }
+  else{
+    return this->non_class_skill_indices;
+  }
 }
 
 double* Skills::get_all_skill_ranks_and_bonuses() const{
@@ -197,4 +229,24 @@ double* Skills::get_skill_ranks_and_bonuses(int row_index){
     skill_row[i] = this->skills_ranks_and_bonuses[((row_index*4)+i)];
   }
   return skill_row;
+}
+
+/** Destroyers (used only for testing/debugging purposes)**/
+
+void Skills::destroy_class_skill_indices(){
+  if(!this->class_skill_indices.empty()){
+    this->class_skill_indices.clear();
+  }
+}
+
+void Skills::destroy_non_class_skill_indices(){
+  if(!this->non_class_skill_indices.empty()){
+    this->non_class_skill_indices.clear();
+  }
+}
+
+void Skills::destroy_all_skill_ranks_and_bonuses(){
+  if(this->skills_ranks_and_bonuses != NULL){
+      free(this->skills_ranks_and_bonuses);
+  }
 }

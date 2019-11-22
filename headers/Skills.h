@@ -18,7 +18,6 @@ private:
   /**45 skills with 4 columns: Total Skill Rank, Base Ranks (The player directly modifies this), Ability Modifier, Miscellaneous Modifiers (The player indirectly modifies this)**/
   /**For simplicity, I'll change this to be a 1-D array containing (num_skills * num_cols) elements (i.e. 44*4 = 176 elements).
      Also, I'll just have the constructor malloc the memory for the array instead of making it static to avoid potential maintenance issues.**/
-  // int skills_ranks_and_bonuses[45][4];
   double *skills_ranks_and_bonuses;
   /** Initialization functions kept private since this iteration assumes that Skills is static.**/
   int initialze_skill_names(std::vector<std::string> *skill_names);
@@ -41,11 +40,29 @@ public:
   Thus, 3.5 ranks in a skill means only +3 is used.
   */
   double get_skill_cap(int level, bool is_class_skill);
+
+ /*Print out all class skills*/
   void print_class_skills();
 
+  /*
+   Given a class name, initialize the class skills associated with
+   said class. This will not populate the vector if the name provided
+   is not valid.
+  */
   void set_class_skills(std::string class_name);
 
+  /*
+   Given a vector of class skill indices, copy the vector over to
+   the Skils struct. This will fail if the input is invalid.
+  */
   void manual_set_class_skills(std::vector<int> class_skill_indices);
+
+  /*
+   Given a vector of class skill indices and the number of skills total,
+   create a vector of all non-class skills (essentially the complement).
+   This will not populate if the vector is empty or if the number of skills
+   is below 0.
+  */
   void set_non_class_skills(std::vector<int> class_skill_indices, int num_skills);
 
   /**
@@ -74,6 +91,10 @@ public:
      2-D structure, meaning if you want the 3rd skill, then
      the parameter should be 3, instead of 12.**/
   double* get_skill_ranks_and_bonuses(int row_index);
+
+  void destroy_class_skill_indices();
+  void destroy_non_class_skill_indices();
+  void destroy_all_skill_ranks_and_bonuses();
 
 };
 
