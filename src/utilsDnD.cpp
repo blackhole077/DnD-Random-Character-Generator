@@ -193,17 +193,6 @@ return 0;
 
 // vector<Skill> generateSkills(struct Class& selectedClass, struct Character& character, struct Stats& statsList){
 // 	vector<Skill> skill_list;
-// 	int rank_cap = character.effectiveLevel + 3;
-// 	int base_gain = 2;
-// 	if(!strcmp(selectedClass.name,"Rogue")){
-// 		base_gain =8;
-// 	}
-// 	else if(!strcmp(selectedClass.name,"Ranger") || !strcmp(selectedClass.name,"Bard")){
-// 		base_gain = 6;
-// 	}
-// 	else if(!strcmp(selectedClass.name,"Barbarian")||(!strcmp(selectedClass.name,"Druid"))||(!strcmp(selectedClass.name,"Monk"))){
-// 		base_gain = 4;
-// 	}
 // 	int skp = determineNumSkillPoints(character.effectiveLevel,base_gain,statsList.intl);
 // 	int ability_bonus = 0;
 // 	for(auto s : selectedClass.classSkills){

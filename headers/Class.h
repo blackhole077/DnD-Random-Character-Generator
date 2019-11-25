@@ -36,7 +36,6 @@ private:
   void smart_stat_increase_loop(int level);
   void smart_stat_increase(int step);
   void set_alignments();
-  void set_skills();
 
 public:
   Class(); //Constructor with no args

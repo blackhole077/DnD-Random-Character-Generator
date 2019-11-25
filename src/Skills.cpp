@@ -5,6 +5,7 @@
 Skills::Skills(){
   int num_skills = 0;
   int num_columns = 0;
+  int base_gain = 0;
   std::vector<std::string> skill_names;
   std::vector<std::string> skill_ability_modifiers;
   std::vector<bool> skill_training_required;
@@ -63,12 +64,29 @@ int Skills::initialize_all_skills(){
 
 /**Miscellaneous/Auxillary Functions**/
 
+void Skills::update_skill(int num_ranks_increase, int skill_index){
+  if(num_ranks_increase < 0){
+    return;
+  }
+  else if((!contains(this->class_skill_indices,skill_index)) && !contains(this->non_class_skill_indices,skill_index)){
+    return;
+  }
+  else{
+
+  }
+}
+
+
 double get_skill_cap(int level, bool is_class_skill){
 	return (is_class_skill) ? level+3 : (level+3)/2.0;
 }
 
-int determine_number_of_skill_points(int level, int base_gain, int int_modifier){
-	return ((base_gain+int_modifier)*4)+((base_gain+int_modifier)*(level-1));
+int determine_number_of_skill_points_batch(int level, int base_gain, int int_modifier){
+	return (determine_number_of_skill_points(base_gain,int_modifier)*4)+(determine_number_of_skill_points(base_gain,int_modifier)*(level-1));
+}
+
+int determine_number_of_skill_points(int base_gain, int int_modifier){
+  return std::max(1,(base_gain+int_modifier));
 }
 
 void Skills::print_class_skills(){
@@ -134,6 +152,53 @@ void Skills::set_class_skills(std::string class_name){
     return;
   }
 
+}
+
+void Skills::set_base_gain(std::string class_name){
+  if(class_name.empty()){
+    return;
+  }
+	else if(!class_name.compare("Rogue")){
+		this->base_gain = 8;
+	}
+	else if(!class_name.compare("Bard") || !class_name.compare("Ranger")){
+		this->base_gain = 6;
+	}
+	else if(!class_name.compare("Barbarian")||(!class_name.compare("Druid"))||(!class_name.compare("Monk"))){
+		this->base_gain = 4;
+	}
+  else if ( (!class_name.compare("Cleric")) || (!class_name.compare("Fighter")) || (!class_name.compare("Paladin")) || (!class_name.compare("Sorcerer")) || (!class_name.compare("Wizard"))){
+    this->base_gain = 2;
+  }
+  else{
+    return;
+  }
+}
+
+void Skills::set_skill_ranks_and_bonuses(int row_index, int column_index, double value_to_set){
+  if(row_index < 0 || (row_index*4) > ((this->num_skills * this->num_columns) - 4)){
+    return;
+  }
+  else if(column_index < 0 || column_index > 3){
+    return;
+  }
+  else{
+    this->skills_ranks_and_bonuses[((row_index*4)+column_index)] = value_to_set;
+  }
+}
+
+// void Skills::set_skill_total_ranks(int row_index)
+
+void Skills::set_skill_base_ranks(int row_index, double value_to_set){
+  set_skill_ranks_and_bonuses(row_index, 1, value_to_set);
+}
+
+void Skills::set_skill_ability_modifier(int row_index, double value_to_set){
+  set_skill_ranks_and_bonuses(row_index, 2, value_to_set);
+}
+
+void Skills::set_skill_miscellaneous_bonus(int row_index, double value_to_set){
+  set_skill_ranks_and_bonuses(row_index, 3, value_to_set);
 }
 
 void Skills::manual_set_class_skills(std::vector<int> class_skill_indices){
