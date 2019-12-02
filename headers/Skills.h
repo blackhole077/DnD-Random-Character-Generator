@@ -35,6 +35,18 @@ private:
    **/
   void update_skill(int num_ranks_increase, int skill_index);
 
+  /** This is the main control loop that controls the skill-up process from level 1 to num_levels.
+   *  This function also accounts for if the character is human or not, and adjusts the points
+   *  accordingly (+4 at level 1, +1 per level on top of the number determined). 
+   * 
+   *  First, it determines how many skill ranks are going to be bought (this number will be 1/2)
+   *  for non-class skills. Then, it will determine what skill is going to be raised 
+   *  (90/10 class skill v. non-class skill) with a weighted distribution 
+   *  (uniform for testing) to detemrine index.
+   *  
+   **/
+void update_skills(int num_levels, std::string race_name, int character_base_int_gain, int int_modifier);
+
   /** This is the general function (that will be private) which modifies the given entry in
    *  the skills_ranks_and_bonuses array to the value_to_set. If the row_index or column_index
    *  are not valid, then nothing will occur. This function will be called by the other three
@@ -88,6 +100,13 @@ public:
    is below 0.
   */
   void set_non_class_skills(std::vector<int> class_skill_indices, int num_skills);
+ 
+  /** Similar to determine_number_of_skill_points_batch, but for a single level.
+   *  This would be used in lieu of the batch function simply because it will be
+   *  better equipped for dealing with changes in the intelligence score that affect
+   *  the intelligence modifier.
+   **/
+  int determine_number_of_skill_points(int base_gain, int int_modifier);
 
   /**
   Get the number of skill points a character has available to them (all at once).
@@ -98,12 +117,6 @@ public:
   **/
   int determine_number_of_skill_points_batch(int level, int base_gain, int int_modifier);
 
-  /** Similar to determine_number_of_skill_points_batch, but for a single level.
-   *  This would be used in lieu of the batch function simply because it will be
-   *  better equipped for dealing with changes in the intelligence score that affect
-   *  the intelligence modifier.
-   **/
-  int determine_number_of_skill_points(int base_gain, int int_modifier);
 
 
   //Setters

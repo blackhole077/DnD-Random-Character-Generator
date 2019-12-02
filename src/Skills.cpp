@@ -71,9 +71,40 @@ void Skills::update_skill(int num_ranks_increase, int skill_index){
   else if((!contains(this->class_skill_indices,skill_index)) && !contains(this->non_class_skill_indices,skill_index)){
     return;
   }
-  else{
+  else if(contains(this->class_skill_indices, skill_index)){
+    // this->class_skill_indices.at(skill_index) += num_ranks_increase;
+  }
+}
+
+void Skills::update_skills(int num_levels, std::string race_name, int character_base_skill_point_gain, int int_modifier){
+  //-5 is the lowest the modifier possible in Dungeons & Dragons v3.5 as it corresponds to a score of 1.
+  // However, it should be -4 since PC characters must have an INT of 3 to be sapient but whatever.
+  if(num_levels < 1 || int_modifier < -4){
+    return;
+  }
+
+  int available_skill_points = 0;
+  for(int i = 1; i <= num_levels; i++){
+    /**Determine number of available skill points for the level.**/
+    if(i == 1){
+      available_skill_points += determine_number_of_skill_points(character_base_skill_point_gain, int_modifier) * 4;
+      if(!race_name.compare("Human")){
+        available_skill_points += 4;
+      }
+    }
+    else{
+      available_skill_points += determine_number_of_skill_points(character_base_skill_point_gain, int_modifier);
+      if(!race_name.compare("Human")){
+        available_skill_points += 1;
+      }
+    }
+    /**Determine how many skill ranks are to be purchased. For testing, it will be done as uniform.**/
+    int skill_index = rolldX(this->num_skills);
+    // int num_ranks_increase = std::min(,rolldX((num_levels)+1)-1;
 
   }
+
+
 }
 
 
@@ -81,13 +112,14 @@ double get_skill_cap(int level, bool is_class_skill){
 	return (is_class_skill) ? level+3 : (level+3)/2.0;
 }
 
+int determine_number_of_skill_points(int base_gain, int int_modifier){
+  return std::max(1,(base_gain+int_modifier));
+}
+
 int determine_number_of_skill_points_batch(int level, int base_gain, int int_modifier){
 	return (determine_number_of_skill_points(base_gain,int_modifier)*4)+(determine_number_of_skill_points(base_gain,int_modifier)*(level-1));
 }
 
-int determine_number_of_skill_points(int base_gain, int int_modifier){
-  return std::max(1,(base_gain+int_modifier));
-}
 
 void Skills::print_class_skills(){
 	printElement("Skill",30,' ');
