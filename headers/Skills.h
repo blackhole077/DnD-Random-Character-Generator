@@ -17,33 +17,33 @@ private:
   std::vector<int> class_skill_indices;
   std::vector<int> non_class_skill_indices;
 
-  /**45 skills with 4 columns: 
+  /**45 skills with 4 columns:
    * Total Skill Rank, Base Ranks (The player directly modifies this),
    * Ability Modifier, Miscellaneous Modifiers (The player indirectly modifies this)
-   * 
+   *
    * For simplicity, I'll change this to be a 1-D array containing (num_skills * num_cols) elements
    * (i.e. 45*4 = 180 elements). Also, I'll just have the constructor malloc the memory for the
    * array instead of making it static to avoid potential maintenance issues.
    **/
   double *skills_ranks_and_bonuses;
 
-  /** Function that is called during control loop. This adds the ranks to a given skill 
-   *  (noted by skill_index), assuming that the number of ranks to increase by is a positive 
+  /** Function that is called during control loop. This adds the ranks to a given skill
+   *  (noted by skill_index), assuming that the number of ranks to increase by is a positive
    *  non-zero value and that the skill_index called is correct. If either of these does not hold,
    *  then nothing occurs. This may cause issues if there is no handling for no ranks being placed
    *  in the control loop.
    **/
-  void update_skill(int num_ranks_increase, int skill_index);
+  void update_skill(double num_ranks_increase, int skill_index);
 
   /** This is the main control loop that controls the skill-up process from level 1 to num_levels.
    *  This function also accounts for if the character is human or not, and adjusts the points
-   *  accordingly (+4 at level 1, +1 per level on top of the number determined). 
-   * 
+   *  accordingly (+4 at level 1, +1 per level on top of the number determined).
+   *
    *  First, it determines how many skill ranks are going to be bought (this number will be 1/2)
-   *  for non-class skills. Then, it will determine what skill is going to be raised 
-   *  (90/10 class skill v. non-class skill) with a weighted distribution 
+   *  for non-class skills. Then, it will determine what skill is going to be raised
+   *  (90/10 class skill v. non-class skill) with a weighted distribution
    *  (uniform for testing) to detemrine index.
-   *  
+   *
    **/
 void update_skills(int num_levels, std::string race_name, int character_base_int_gain, int int_modifier);
 
@@ -59,14 +59,14 @@ public:
 
   /** Initializes a static instance of ALL skills available in the base version of
    *  Dungeons & Dragons v3.5. As it assumes a static instance, the assumption is 44 skills
-   *  (Knowledge is expanded to be 9 separate skills) and 4 columns to represent ranks and 
+   *  (Knowledge is expanded to be 9 separate skills) and 4 columns to represent ranks and
    *  their various modifiers.
    **/
   int initialize_all_skills();
 
   /** If it's a class skill it's character level + 3.
    *  If not it's 1/2 (no rounding) of character level + 3.
-   *  Important note, skills CAN increment in 1/2 ranks. However,  any 1/2 rank has no bearing on 
+   *  Important note, skills CAN increment in 1/2 ranks. However,  any 1/2 rank has no bearing on
    *  the skill it's tied to. Thus, 3.5 ranks in a skill means only +3 is used.
    **/
   double get_skill_cap(int level, bool is_class_skill);
@@ -100,7 +100,7 @@ public:
    is below 0.
   */
   void set_non_class_skills(std::vector<int> class_skill_indices, int num_skills);
- 
+
   /** Similar to determine_number_of_skill_points_batch, but for a single level.
    *  This would be used in lieu of the batch function simply because it will be
    *  better equipped for dealing with changes in the intelligence score that affect
