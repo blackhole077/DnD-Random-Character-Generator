@@ -50,6 +50,25 @@ void combine(std::vector<T> &vector_A, std::vector<T> &vector_B){
 	}
 }
 
+template<typename T>
+T array_summation(T* array, size_t array_size, int starting_index){
+	T sum = 0;
+	if(array == NULL || starting_index < 0){
+		return -1;
+	}
+	else if(starting_index > 0){
+		if((unsigned) starting_index >= array_size){
+			return -1;
+		}
+	}
+	else{
+		for(size_t i = starting_index; i < array_size; i++){
+			sum += array[i];
+		}
+	}
+	return sum;
+}
+
 std::vector<int> operator+(const std::vector<int>& a, const std::vector<int>& b);
 std::map<int,int> smart_stat_distribution(std::vector<int> bad_class_stats, std::vector<int> bad_available_stats, std::vector<int> good_class_stats, std::vector<int> good_available_stats);
 

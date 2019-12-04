@@ -6,6 +6,8 @@ int main(){
   cout << "Hello there!" << endl;
   Skills all_skills;
   vector<string> test_classes = {"Barbarian", "Bard", "Cleric", "Druid", "Fighter", "Monk", "Paladin", "Ranger", "Rogue", "Sorcerer", "Wizard"};
+  vector<string> test_races = {"Human", "Dwarf"};
+
   cout << "Testing initialize_all_skills...\n" << endl;
   int error_code = all_skills.initialize_all_skills();
   if(error_code != 0){
@@ -54,8 +56,15 @@ int main(){
   num_failed = 0;
   destroy_num_failed = 0;
   destroy_num_passed = 0;
-  cout << "Testing error handling for set_class_skills..." << endl;
-  
-
+  // cout << "Testing error handling for set_class_skills..." << endl;
+  cout << "Testing overall program..." << endl;
+  string test_class = "Barbarian";
+  string test_race = "Human";
+  int num_levels = 10;
+  int int_modifier = 2;
+  all_skills.set_base_gain(test_class);
+  all_skills.set_class_skills(test_class);
+  all_skills.update_skills(num_levels, test_race, int_modifier);
+  all_skills.print_class_skills();
   return 0;
 }

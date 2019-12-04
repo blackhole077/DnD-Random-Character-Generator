@@ -45,6 +45,7 @@ int rolldX(const int numFace)
 { //Roll 1dx then return result as an array
 	int roll;
 	std::random_device rd;
+	std::mt19937 gen(rd());
 	std::uniform_int_distribution<int> die(1, numFace);
 	//rolls = (int *)malloc(sizeof(int) * numDie);
 	roll = (die(rd));

@@ -2,16 +2,18 @@
 
 /**Constructor/Initializer**/
 
-Skills::Skills(){
-  int num_skills = 0;
-  int num_columns = 0;
-  int base_gain = 0;
+/**This constructor is improperly done, follow https://www.modernescpp.com/index.php/c-core-guidelines-constructors and re-do this later.**/
+Skills::Skills()
+{
+  this->num_skills;
+  this->num_columns;
+  this->base_gain;
   std::vector<std::string> skill_names;
   std::vector<std::string> skill_ability_modifiers;
   std::vector<bool> skill_training_required;
   std::vector<int> class_skill_indices;
   std::vector<int> non_class_skill_indices;
-  double *skills_ranks_and_bonuses = NULL;
+  this->skills_ranks_and_bonuses;
 }
 
 int Skills::initialize_all_skills(){
@@ -62,16 +64,16 @@ int Skills::initialize_all_skills(){
   return 0;
 }
 
-double get_skill_cap(int level, bool is_class_skill){
+double Skills::get_skill_cap(int level, bool is_class_skill){
 	return (is_class_skill) ? level+3 : (level+3)/2.0;
 }
 
-int determine_number_of_skill_points(int base_gain, int int_modifier){
-  return std::max(1,(base_gain+int_modifier));
+int Skills::determine_number_of_skill_points(int int_modifier){
+  return std::max(1,(this->base_gain+int_modifier));
 }
 
-int determine_number_of_skill_points_batch(int level, int base_gain, int int_modifier){
-	return (determine_number_of_skill_points(base_gain,int_modifier)*4)+(determine_number_of_skill_points(base_gain,int_modifier)*(level-1));
+int Skills::determine_number_of_skill_points_batch(int level, int int_modifier){
+	return (determine_number_of_skill_points(int_modifier)*4)+(determine_number_of_skill_points(int_modifier)*(level-1));
 }
 
 
@@ -173,7 +175,14 @@ void Skills::set_skill_ranks_and_bonuses(int row_index, int column_index, double
   }
 }
 
-// void Skills::set_skill_total_ranks(int row_index)
+void Skills::determine_total_skill_bonus(int row_index){
+  if(row_index < 0 || (row_index*4) > ((this->num_skills * this->num_columns) - 4)){
+    return;
+  }
+  else{
+    this->skills_ranks_and_bonuses[row_index] = array_summation(get_skill_ranks_and_bonuses(row_index),4,1);
+  }
+}
 
 void Skills::set_skill_base_ranks(int row_index, double value_to_set){
   set_skill_ranks_and_bonuses(row_index, 1, value_to_set);
@@ -322,7 +331,7 @@ void Skills::update_skill(double num_ranks_increase, int skill_index){
   }
 }
 
-void Skills::update_skills(int num_levels, std::string race_name, int character_base_skill_point_gain, int int_modifier){
+void Skills::update_skills(int num_levels, std::string race_name, int int_modifier){
   //-5 is the lowest the modifier possible in Dungeons & Dragons v3.5 as it corresponds to a score of 1.
   // However, it should be -4 since PC characters must have an INT of 3 to be sapient but whatever.
   if(num_levels < 1 || int_modifier < -4){
@@ -333,22 +342,34 @@ void Skills::update_skills(int num_levels, std::string race_name, int character_
   for(int i = 1; i <= num_levels; i++){
     /**Determine number of available skill points for the level.**/
     if(i == 1){
-      available_skill_points += determine_number_of_skill_points(character_base_skill_point_gain, int_modifier) * 4;
+      available_skill_points += determine_number_of_skill_points(int_modifier) * 4;
       if(!race_name.compare("Human")){
         available_skill_points += 4;
       }
     }
     else{
-      available_skill_points += determine_number_of_skill_points(character_base_skill_point_gain, int_modifier);
+      available_skill_points += determine_number_of_skill_points(int_modifier);
       if(!race_name.compare("Human")){
         available_skill_points += 1;
       }
     }
+    while(available_skill_points > 0){
+    std::cout << "Number of available skill points: "<< available_skill_points << std::endl;
     /**Determine which skill is to be raised. For testing, this will be done using a unifrom distribution**/
-    int skill_index = rolldX(this->num_skills);
+    // std::cout << "Number of skills: "<< this->num_skills << std::endl;
+    int skill_index = rolldX(46);
+    bool is_class_skill = contains(this->class_skill_indices,skill_index) ? true : false;
+    std::cout << "Is " << get_skill_name(skill_index) << " a class skill?" << std::endl;
+    while(!is_class_skill){
+      skill_index = rolldX(45);
+      is_class_skill = contains(this->class_skill_indices,skill_index) ? true : false;
+      // std::cout << "Is " << get_skill_name(skill_index) << " a class skill?" << std::endl;
+    }
     /**Determine how many skill ranks are to be purchased. For testing, it will be done as uniform.**/
-    double num_ranks_increase = (double) rolldX(num_levels+1)-1;
+    double num_ranks_increase = std::min((double) available_skill_points, (double) rolldX(get_skill_cap(i,is_class_skill)+1)-1);
     update_skill(num_ranks_increase, skill_index);
+    available_skill_points -= num_ranks_increase;
+    }
   }
 
 
