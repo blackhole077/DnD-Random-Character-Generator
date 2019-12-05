@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <time.h>
 #include "../headers/dnd_template_functions.h"
 
 class Skills{
@@ -110,8 +111,9 @@ public:
 
 
   //Setters
-  void set_skill_base_ranks(int row_index, double value_to_set);
-  void set_skill_ability_modifier(int row_index, double value_to_set);
+  void set_skill_total_ranks_bonus(int row_index, double value_to_set);
+  void set_skill_base_ranks_bonus(int row_index, double value_to_set);
+  void set_skill_ability_modifier_bonus(int row_index, double value_to_set);
   void set_skill_miscellaneous_bonus(int row_index, double value_to_set);
 
   //Getters
@@ -131,6 +133,10 @@ public:
      2-D structure, meaning if you want the 3rd skill, then
      the parameter should be 3, instead of 12.**/
   double* get_skill_ranks_and_bonuses(int row_index);
+  double get_skill_total_ranks_bonus(int row_index);
+  double get_skill_base_ranks_bonus(int row_index);
+  double get_skill_ability_modifier_bonus(int row_index);
+  double get_skill_miscellaneous_bonus(int row_index);
 
   void destroy_class_skill_indices();
   void destroy_non_class_skill_indices();

@@ -1,5 +1,10 @@
 #include "../headers/dnd_template_functions.h"
 using namespace std;
+const int roll3d6Drop1[19] = {0, 0, 0, 11, 285, 2187, 8480, 18981, 34095, 53500, 73675, 85007, 87748, 81348, 66142, 44256, 26459, 13260, 4566};
+std::vector<int> weights(roll3d6Drop1, roll3d6Drop1 + sizeof(roll3d6Drop1) / sizeof(roll3d6Drop1[0]));
+std::discrete_distribution<> dist(weights.begin(), weights.end());
+const unsigned int seed = time(0);
+std::mt19937 engine(seed);
 
 std::vector<int> operator+(const std::vector<int> &a, const std::vector<int> &b)
 {
@@ -11,9 +16,6 @@ std::vector<int> operator+(const std::vector<int> &a, const std::vector<int> &b)
 	return result;
 }
 
-const int roll3d6Drop1[19] = {0, 0, 0, 11, 285, 2187, 8480, 18981, 34095, 53500, 73675, 85007, 87748, 81348, 66142, 44256, 26459, 13260, 4566};
-std::vector<int> weights(roll3d6Drop1, roll3d6Drop1 + sizeof(roll3d6Drop1) / sizeof(roll3d6Drop1[0]));
-std::discrete_distribution<> dist(weights.begin(), weights.end());
 
 /*Section for rolling dice*/
 int cdfRoll()
@@ -29,12 +31,11 @@ int rollXdX(const int numDie, const int numFace)
 { //Roll xdx then return result as an array
 	int *rolls;
 	int sum = 0;
-	std::random_device rd;
 	std::uniform_int_distribution<> die(1, numFace);
 	rolls = (int *)malloc(sizeof(int) * numDie);
 	for (int i = 0; i < numDie; i++)
 	{
-		sum += die(rd);
+		sum += die(engine);
 	}
 
 	return sum;
@@ -44,11 +45,9 @@ int rollXdX(const int numDie, const int numFace)
 int rolldX(const int numFace)
 { //Roll 1dx then return result as an array
 	int roll;
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<int> die(1, numFace);
+	std::uniform_int_distribution<> die(1, numFace);
 	//rolls = (int *)malloc(sizeof(int) * numDie);
-	roll = (die(rd));
+	roll = die(engine);
 	return roll;
 	//Returns the address to the first element of the array
 }
