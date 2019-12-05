@@ -1,4 +1,7 @@
 #include "../headers/Skills.h"
+// const unsigned int seed = time(0);
+// std::mt19937_64 rng(seed);
+// std::uniform_int_distribution<int> distribution(0, 44);
 
 /**Constructor/Initializer**/
 /**This constructor is improperly done, follow https://www.modernescpp.com/index.php/c-core-guidelines-constructors and re-do this later.**/
