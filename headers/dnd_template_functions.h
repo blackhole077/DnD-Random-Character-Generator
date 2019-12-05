@@ -11,7 +11,9 @@
 #include <iomanip>
 #include <fstream>
 #include <iterator>
+#include <time.h>
 // #include "roll.h"
+
 template <typename T>
 void printElement(T t, const int &num_width, const char &separator)
 {
@@ -56,10 +58,8 @@ T array_summation(T* array, size_t array_size, int starting_index){
 	if(array == NULL || starting_index < 0){
 		return -1;
 	}
-	else if(starting_index > 0){
-		if((unsigned) starting_index >= array_size){
+	else if(starting_index > 0 && ((unsigned) starting_index >= array_size)){
 			return -1;
-		}
 	}
 	else{
 		for(size_t i = starting_index; i < array_size; i++){
@@ -71,7 +71,6 @@ T array_summation(T* array, size_t array_size, int starting_index){
 
 std::vector<int> operator+(const std::vector<int>& a, const std::vector<int>& b);
 std::map<int,int> smart_stat_distribution(std::vector<int> bad_class_stats, std::vector<int> bad_available_stats, std::vector<int> good_class_stats, std::vector<int> good_available_stats);
-
 
 int cdfRoll();
 int rollXdX(const int numDie, const int numFace);
