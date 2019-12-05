@@ -64,10 +64,8 @@ T array_summation(T* array, size_t array_size, int starting_index){
 	else{
 		for(size_t i = starting_index; i < array_size; i++){
 			sum += array[i];
-			std::cout << "Sum is currently " << sum << std::endl;
 		}
 	}
-	std::cout << "Sum is " << sum << std::endl;
 	return sum;
 }
 

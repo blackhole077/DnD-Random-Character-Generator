@@ -42,7 +42,7 @@ private:
    *  functions, which modify a given column, that are public.
    **/
   void set_skill_ranks_and_bonuses(int row_index, int column_index, double value_to_set);
-  
+
   void determine_total_skill_bonus(int row_index);
 
 public:
@@ -154,6 +154,7 @@ public:
    *
    **/
   void update_skills(int num_levels, std::string race_name, int int_modifier);
+  void determine_ability_modifier(int skill_index, std::vector<int>);
 
 };
 
