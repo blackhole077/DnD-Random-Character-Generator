@@ -90,7 +90,7 @@ void Skills::print_class_skills()
 {
   printElement("Skill", 30, ' ');
   printElement("Key Ability", 16, ' ');
-  printElement("Total Ranks", 13, ' ');
+  printElement("Skill Modifier", 13, ' ');
   printElement("Ranks", 6, ' ');
   printElement("Ability Modifier", 21, ' ');
   printElement("Misc. Modifier", 19, ' ');
@@ -103,7 +103,6 @@ void Skills::print_class_skills()
     printElement(get_skill_base_ranks_bonus(x), 5, ' ');
     printElement(get_skill_ability_modifier_bonus(x), 21, ' ');
     printElement(get_skill_miscellaneous_bonus(x), 19, ' ');
-    std::cout << std::endl;
   }
 }
 
@@ -338,7 +337,7 @@ std::vector<int> Skills::get_non_class_skill_indices() const
   }
 }
 
-double *Skills::get_all_skill_ranks_and_bonuses() const
+double *Skills::get_all_skill_ranks_and_bonuses()
 {
   return this->skills_ranks_and_bonuses;
 }
@@ -407,6 +406,18 @@ void Skills::destroy_all_skill_ranks_and_bonuses()
   }
 }
 
+/**Resetters (Soft Destroy) (Used only for testing/debugging purposes)**/
+void Skills::reset_all_skill_ranks_and_bonuses(){
+  if(get_all_skill_ranks_and_bonuses() != NULL){
+    size_t array_size = sizeof(get_all_skill_ranks_and_bonuses());
+    memset(get_all_skill_ranks_and_bonuses(), 0, array_size);
+  }
+  else{
+    return;
+  }
+}
+
+
 /**Miscellaneous/Auxillary Functions**/
 
 void Skills::determine_ability_modifier(int skill_index, std::vector<int> ability_modifiers){
@@ -471,10 +482,10 @@ void Skills::update_skills(int num_levels, std::string race_name, int int_modifi
   {
     return;
   }
-
-  int available_skill_points = 0;
+  int available_skill_points;
   for (int i = 1; i <= num_levels; i++)
   {
+    available_skill_points = 0;
     /**Determine number of available skill points for the level.**/
     if (i == 1)
     {
@@ -492,18 +503,22 @@ void Skills::update_skills(int num_levels, std::string race_name, int int_modifi
         available_skill_points += 1;
       }
     }
-
-    for(int x = 0; x < this->class_skill_indices.size(); x++){
+    // std::cout << "Starting Skill Points for Level " << i << ": " << available_skill_points << std::endl;
+    for(size_t x = 0; x < this->class_skill_indices.size(); x++){
       int skill_index = this->class_skill_indices.at(x);
       double skill_cap = (double) get_skill_cap(i,true);
-      double num_ranks_increase = std::min(std::min((double) available_skill_points, (skill_cap - get_skill_base_ranks_bonus(skill_index))), \
-                                          (double)rolldX(((int)skill_cap) + 1)-1);
+      double skill_cap_gap = (skill_cap - get_skill_base_ranks_bonus(skill_index));
+      skill_cap_gap = (skill_cap_gap > 0) ? skill_cap_gap : 0;
+      double num_ranks_increase = std::min((double) available_skill_points,(double)rolldX(((int)skill_cap_gap) + 1)-1);
       update_skill(num_ranks_increase, skill_index);
       available_skill_points -= num_ranks_increase;
     }
-    if(available_skill_points > 0){
-      std::cout << "Remaining Skill Points for Level " << i << ": " << available_skill_points << std::endl;
-    }
+    // if(available_skill_points > 0){
+    //   std::cout << "Remaining Skill Points for Level " << i << ": " << available_skill_points << std::endl;
+    // }
+    // else{
+    //   std::cout << "All Skill Points for Level " << i << " expended." << std::endl;
+    // }
     // while (available_skill_points > 0)
     // {
     //   /**Determine which skill is to be raised. For testing, this will be done using a unifrom distribution**/

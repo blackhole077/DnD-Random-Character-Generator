@@ -124,7 +124,7 @@ public:
   std::vector<int> get_class_skill_indices() const;
   std::vector<int> get_non_class_skill_indices() const;
 
-  double *get_all_skill_ranks_and_bonuses() const;
+  double *get_all_skill_ranks_and_bonuses();
 
   /**Return the skill ranks and bonuses for a specific skill.
      Because of the design as a 1-D array version of what is
@@ -141,6 +141,8 @@ public:
   void destroy_class_skill_indices();
   void destroy_non_class_skill_indices();
   void destroy_all_skill_ranks_and_bonuses();
+
+  void reset_all_skill_ranks_and_bonuses();
 
 
   /** This is the main control loop that controls the skill-up process from level 1 to num_levels.

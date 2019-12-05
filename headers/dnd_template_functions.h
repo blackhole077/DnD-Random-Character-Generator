@@ -22,7 +22,13 @@ void printElement(T t, const int &num_width, const char &separator)
 
 template<typename T>
 void printVector(const std::vector<T> &t) {
-	std::copy(t.cbegin(), t.cend(), std::ostream_iterator<typename T::value_type>(std::cout, ", "));
+	typename std::vector<T>::const_iterator it;
+	for(it = t.begin(); it != t.end(); it++){
+		if(it != t.begin()){
+			std::cout << ", ";
+		}
+		std::cout << (*it);
+	}
 }
 
 template<typename T>

@@ -68,8 +68,9 @@ int main(){
     num_levels = rolldX(20);
     int_modifier = test_modifiers.at(3);
     cout << "Testing overall program using RACE:" << test_race << " CLASS: "<< test_class << " LEVEL: " << num_levels << endl;
-    // cout << "Using modifiers: <" << printVector(&test_modifiers) << ">" << endl;
-    // printVector(test_modifiers);
+    cout << "Using modifiers: <";
+    printVector(test_modifiers);
+    cout << ">" << endl;
     all_skills.set_base_gain(test_class);
     all_skills.set_class_skills(test_class);
     for (int x = 0; x < 45; x++){
@@ -77,7 +78,8 @@ int main(){
     }
     all_skills.update_skills(num_levels, test_race, int_modifier);
     all_skills.print_class_skills();
-    all_skills.destroy_class_skill_indices();//This does not reset the skills that were ranked up.
+    all_skills.destroy_class_skill_indices();
+    all_skills.reset_all_skill_ranks_and_bonuses();
   }
   return 0;
 }

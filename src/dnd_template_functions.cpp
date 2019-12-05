@@ -42,10 +42,16 @@ int rollXdX(const int numDie, const int numFace)
 	//Returns the sum of the array
 }
 
-int rolldX(const int numFace)
+int rolldX(const int num_face)
 { //Roll 1dx then return result as an array
+	if(num_face == 0){
+		return 0;
+	}
+	if(num_face == 1){
+		return 1;
+	}
 	int roll;
-	std::uniform_int_distribution<> die(1, numFace);
+	std::uniform_int_distribution<> die(1, num_face);
 	//rolls = (int *)malloc(sizeof(int) * numDie);
 	roll = die(engine);
 	return roll;
