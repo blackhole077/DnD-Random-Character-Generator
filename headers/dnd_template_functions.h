@@ -22,7 +22,13 @@ void printElement(T t, const int &num_width, const char &separator)
 
 template<typename T>
 void printVector(const std::vector<T> &t) {
-	std::copy(t.cbegin(), t.cend(), std::ostream_iterator<typename T::value_type>(std::cout, ", "));
+	typename std::vector<T>::const_iterator it;
+	for(it = t.begin(); it != t.end(); it++){
+		if(it != t.begin()){
+			std::cout << ", ";
+		}
+		std::cout << (*it);
+	}
 }
 
 template<typename T>
@@ -64,10 +70,8 @@ T array_summation(T* array, size_t array_size, int starting_index){
 	else{
 		for(size_t i = starting_index; i < array_size; i++){
 			sum += array[i];
-			std::cout << "Sum is currently " << sum << std::endl;
 		}
 	}
-	std::cout << "Sum is " << sum << std::endl;
 	return sum;
 }
 

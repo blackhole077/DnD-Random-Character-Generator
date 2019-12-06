@@ -42,7 +42,7 @@ private:
    *  functions, which modify a given column, that are public.
    **/
   void set_skill_ranks_and_bonuses(int row_index, int column_index, double value_to_set);
-  
+
   void determine_total_skill_bonus(int row_index);
 
 public:
@@ -124,7 +124,7 @@ public:
   std::vector<int> get_class_skill_indices() const;
   std::vector<int> get_non_class_skill_indices() const;
 
-  double *get_all_skill_ranks_and_bonuses() const;
+  double *get_all_skill_ranks_and_bonuses();
 
   /**Return the skill ranks and bonuses for a specific skill.
      Because of the design as a 1-D array version of what is
@@ -142,6 +142,8 @@ public:
   void destroy_non_class_skill_indices();
   void destroy_all_skill_ranks_and_bonuses();
 
+  void reset_all_skill_ranks_and_bonuses();
+
 
   /** This is the main control loop that controls the skill-up process from level 1 to num_levels.
    *  This function also accounts for if the character is human or not, and adjusts the points
@@ -154,6 +156,7 @@ public:
    *
    **/
   void update_skills(int num_levels, std::string race_name, int int_modifier);
+  void determine_ability_modifier(int skill_index, std::vector<int>);
 
 };
 

@@ -6,7 +6,7 @@ int main(){
   cout << "Hello there!" << endl;
   Skills all_skills;
   vector<string> test_classes = {"Barbarian", "Bard", "Cleric", "Druid", "Fighter", "Monk", "Paladin", "Ranger", "Rogue", "Sorcerer", "Wizard"};
-  vector<string> test_races = {"Human", "Dwarf"};
+  vector<string> test_races = {"Human", "Dwarf", "Elf", "Orc", "Half-Elf", "Half-Orc", "Halfling", "Gnome"};
 
   cout << "Testing initialize_all_skills...\n" << endl;
   int error_code = all_skills.initialize_all_skills();
@@ -22,7 +22,7 @@ int main(){
 
   int num_passed = 0;
   int num_failed = 0;
-  
+
   int destroy_num_passed = 0;
   int destroy_num_failed = 0;
 
@@ -56,15 +56,30 @@ int main(){
   num_failed = 0;
   destroy_num_failed = 0;
   destroy_num_passed = 0;
-  // cout << "Testing error handling for set_class_skills..." << endl;
-  cout << "Testing overall program..." << endl;
-  string test_class = "Barbarian";
-  string test_race = "Human";
-  int num_levels = 10;
-  int int_modifier = 2;
-  all_skills.set_base_gain(test_class);
-  all_skills.set_class_skills(test_class);
-  all_skills.update_skills(num_levels, test_race, int_modifier);
-  all_skills.print_class_skills();
+  string test_class;
+  string test_race;
+  int num_levels;
+  int int_modifier;
+  vector<int> test_modifiers;
+  for(int i = 0; i < 4; i++){
+    test_modifiers = {(rolldX(10) - 5),(rolldX(10) - 5),(rolldX(10) - 5),(rolldX(10) - 5),(rolldX(10) - 5),(rolldX(10) - 5)};
+    test_class = test_classes.at(rolldX(11)-1);
+    test_race = test_races.at(rolldX(7)-1);
+    num_levels = rolldX(20);
+    int_modifier = test_modifiers.at(3);
+    cout << "Testing overall program using RACE:" << test_race << " CLASS: "<< test_class << " LEVEL: " << num_levels << endl;
+    cout << "Using modifiers: <";
+    printVector(test_modifiers);
+    cout << ">" << endl;
+    all_skills.set_base_gain(test_class);
+    all_skills.set_class_skills(test_class);
+    for (int x = 0; x < 45; x++){
+      all_skills.determine_ability_modifier(x, test_modifiers);
+    }
+    all_skills.update_skills(num_levels, test_race, int_modifier);
+    all_skills.print_class_skills();
+    all_skills.destroy_class_skill_indices();
+    all_skills.reset_all_skill_ranks_and_bonuses();
+  }
   return 0;
 }
