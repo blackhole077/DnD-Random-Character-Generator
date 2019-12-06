@@ -12,6 +12,7 @@
 #include <fstream>
 #include <iterator>
 #include <time.h>
+#include <unordered_set>
 // #include "roll.h"
 
 template <typename T>
@@ -36,9 +37,9 @@ void printVectorInVector(const std::vector<std::vector<T>> &t) {
 	std::for_each(t.cbegin(), t.cend(), printVector<typename T::value_type>);
 }
 
-template<typename T>
-bool contains(std::vector<T> &vector_of_items, const T &element){
-	return std::find(vector_of_items.begin(), vector_of_items.end(), element) != vector_of_items.end();
+template<typename Container>
+bool contains(const Container &container_of_items, typename Container::value_type const &element){
+	return std::find(container_of_items.begin(), container_of_items.end(), element) != container_of_items.end();
 }
 
 template<typename T>
@@ -57,7 +58,29 @@ void combine(std::vector<T> &vector_A, std::vector<T> &vector_B){
 		}
 	}
 }
-
+template<typename T>
+std::vector<T> intersection(const std::vector<T> &vector_a, const std::vector<T> &vector_b){
+	if(vector_a.empty() && vector_b.empty()){
+		return {};
+	}
+	else if(vector_a.empty() && !vector_b.empty()){
+		return vector_b;
+	}
+	else if(vector_b.empty() && !vector_a.empty()){
+		return vector_a;
+	}
+	else{
+		std::vector<T> result;
+		result.reserve(std::min(vector_a.size(),vector_b.size()));
+		std::unordered_set<T> u_set(vector_a.begin(),vector_a.end());
+		for(const auto i: vector_b){
+			if(contains(u_set, i) && (!contains(result,i))){
+				result.push_back(i);
+			}
+		}
+		return result;
+	}
+}
 template<typename T>
 T array_summation(T* array, size_t array_size, int starting_index){
 	T sum = 0;
