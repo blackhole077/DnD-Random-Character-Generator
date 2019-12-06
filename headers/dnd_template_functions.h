@@ -21,9 +21,9 @@ void printElement(T t, const int &num_width, const char &separator)
 	std::cout << std::left << std::setw(num_width) << std::setfill(separator) << t;
 }
 
-template<typename T>
-void printVector(const std::vector<T> &t) {
-	typename std::vector<T>::const_iterator it;
+template<typename Container>
+void printVector(const Container &t) {
+	typename Container::const_iterator it;
 	for(it = t.begin(); it != t.end(); it++){
 		if(it != t.begin()){
 			std::cout << ", ";
