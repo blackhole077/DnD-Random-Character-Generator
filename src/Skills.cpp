@@ -16,6 +16,10 @@ Skills::Skills()
   std::vector<bool> skill_training_required;
   std::vector<int> class_skill_indices;
   std::vector<int> non_class_skill_indices;
+
+  std::vector<int> required_skill_indices;
+  std::vector<int> ignore_skill_indices;
+
   this->skills_ranks_and_bonuses;
 }
 
@@ -108,6 +112,61 @@ void Skills::print_class_skills()
 }
 
 /**Setters (outside of Constructor)**/
+/** Barbarian Ignore Skills:
+    - All non-class skills*
+    - concentration
+    - Any Cha-skill (not intimidate)
+    - craft
+    - handle animal
+    - Any Dex-skill (not escape artist,ride)
+    - knowledge (non-geography)
+    - climb
+    - swim
+    Bard Ignore Skills:
+
+**/
+//Use rpgbot.net/dnd35/characters for information/guidance on this.
+void Skills::set_ignore_skills(std::string class_name){
+  if(class_name.empty()){
+    return;
+  }
+  if(!class_name.compare("Barbarian")){
+    this->ignore_skill_indices = {3,4,5,9,13,15,18,19,20,21,22,23,24,25,26,27,29,30,31,36,38,42,43,44};
+  }
+  else if(!class_name.compare("Bard")){
+    this->ignore_skill_indices = {0,1,3,};
+  }
+  else if(!class_name.compare("Cleric")){
+    this->ignore_skill_indices = {};
+  }
+  else if(!class_name.compare("Druid")){
+    this->ignore_skill_indices = {};
+  }
+  else if(!class_name.compare("Fighter")){
+    this->ignore_skill_indices = {};
+  }
+  else if(!class_name.compare("Monk")){
+    this->ignore_skill_indices = {};
+  }
+  else if(!class_name.compare("Paladin")){
+    this->ignore_skill_indices = {};
+  }
+  else if(!class_name.compare("Ranger")){
+    this->ignore_skill_indices = {};
+  }
+  else if(!class_name.compare("Rogue")){
+    this->ignore_skill_indices = {};
+  }
+  else if(!class_name.compare("Sorcerer")){
+    this->ignore_skill_indices = {};
+  }
+  else if(!class_name.compare("Wizard")){
+    this->ignore_skill_indices = {};
+  }
+  else{
+    return;
+  }
+}
 
 void Skills::set_class_skills(std::string class_name)
 {
