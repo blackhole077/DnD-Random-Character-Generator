@@ -19,8 +19,8 @@ private:
   std::vector<int> non_class_skill_indices;
 
   /**45 skills with 4 columns:
-   * Total Skill Rank, Base Ranks (The player directly modifies this),
-   * Ability Modifier, Miscellaneous Modifiers (The player indirectly modifies this)
+   * [0] Total Skill Modifier, [1] Base Ranks (The player directly modifies this),
+   * [2] Ability Modifier, [3] Miscellaneous Modifiers (The player indirectly modifies this)
    *
    * For simplicity, I'll change this to be a 1-D array containing (num_skills * num_cols) elements
    * (i.e. 45*4 = 180 elements). Also, I'll just have the constructor malloc the memory for the
@@ -99,12 +99,11 @@ public:
    **/
   int determine_number_of_skill_points(int int_modifier);
 
-  /**
-  Get the number of skill points a character has available to them (all at once).
-  This does not assume anything about race (as Human does get extra)
-  to avoid complexity. Furthermore, this does not retroactively apply
-  additional skill points that would be gained if a character's INT
-  modifier increases.
+  /**Get the number of skill points a character has available to them (all at once).
+     This does not assume anything about race (as Human does get extra)
+     to avoid complexity. Furthermore, this does not retroactively apply
+     additional skill points that would be gained if a character's INT
+     modifier increases.
   **/
   int determine_number_of_skill_points_batch(int level, int int_modifier);
 
@@ -137,12 +136,38 @@ public:
   double get_skill_base_ranks_bonus(int row_index);
   double get_skill_ability_modifier_bonus(int row_index);
   double get_skill_miscellaneous_bonus(int row_index);
-
+  /**
+   * Destroy the contents of the class_skill_indices vector.
+   **/
   void destroy_class_skill_indices();
+  /**
+   * Destroy the contents of the non_class_skill_indices vector.
+   **/
   void destroy_non_class_skill_indices();
+  /**
+   * Destroy the all_skill_ranks_and_bonuses array
+   **/
   void destroy_all_skill_ranks_and_bonuses();
-
+  /**
+   * Reset the all_skill_ranks_and_bonuses by setting the contents to zero
+   **/
   void reset_all_skill_ranks_and_bonuses();
+
+/**Steps for leveling up skills per level
+  0. Determine if character will spend a skill point to learn a langauge
+    0a. If yes, call a different function and then come back to this with 1 less skill point
+    0b. If not, continue;
+  1. Determine if the skill chosen is going to be a class skill or not (binomial distribution)
+     The number of ranks placed either way is determined by a Poisson distribution, with the
+     lambda value (expected number of occurrences) being the median of [0, min((skill_cap - current_skill_level),0)].
+     Keep in mind skill_cap is halved for non-class skills.
+    1a. If a non-class skill is chosen, then first check if any ranks are placed (binomial distribution; 0.2 success)
+        If zero is chosen, then return to step 1.
+    ALTERNATE METHOD:
+      1. Change the Poisson Distribution to have a lambda value of median(0,skill_cap) or median(0,(skill_cap)/2)
+      2. Select a skill via weighted distribution
+      3. Apply ranks equal to min((skill_cap - current_skill_level), ranks_to_apply) and decrement by same amount.
+**/
 
 
   /** This is the main control loop that controls the skill-up process from level 1 to num_levels.
@@ -156,7 +181,13 @@ public:
    *
    **/
   void update_skills(int num_levels, std::string race_name, int int_modifier);
-  void determine_ability_modifier(int skill_index, std::vector<int>);
+
+  /**
+   * Given a skill_index and a vector of the ability_modifiers, determine the appropriate
+   * ability modifier to apply to a skill, and set the ability modifier column in the
+   * all_skills_ranks_and_bonuses to the value.
+   **/
+  void determine_ability_modifier(int skill_index, std::vector<int> ability_modifiers);
 
 };
 

@@ -102,6 +102,7 @@ void Skills::print_class_skills()
     printElement(get_skill_base_ranks_bonus(x), 5, ' ');
     printElement(get_skill_ability_modifier_bonus(x), 21, ' ');
     printElement(get_skill_miscellaneous_bonus(x), 19, ' ');
+    std::cout << std::endl;
   }
 }
 
