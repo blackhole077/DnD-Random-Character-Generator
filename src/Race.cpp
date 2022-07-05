@@ -61,6 +61,7 @@ std::string Race::get_race_name() const
 {
 	return name;
 }
+
 std::vector<int> Race::get_stats_modifier() const
 {
 	return stats_mod;
@@ -81,6 +82,19 @@ void Race::determine_race()
 	set_race_name(race);
 }
 
+/**
+ * @brief Figure out what stats need to be modified based on the race that is chosen.
+ * 
+ * In D&D 3.5 Edition, selecting the race of your character typically modified two stats.
+ * The exception to this is Half-Orc, which two stats are lowered (for reasons unknown).
+ * 
+ * NOTE: Here is an illustration of stats_mod. The indices correspond to reading a character stat block from top to bottom.
+ * 				STRENGTH        DEXTERITY        CONSTITUTION        INTELLIGENCE          WISDOM        CHARISMA
+ * 	STATS_MOD = {		0,				0,					0,					0,				0,				0}
+ * 
+ *	All values should be added to whatever stats are rolled for the character, meaning this generally should take place after stats are rolled,
+ * 	but BEFORE stats are fully allocated to avoid having a stat exceed 18 (as this is considered the cap for level 1 characters).
+ */
 void Race::generate_stats_modifier()
 {
 	if (!name.compare("Dwarf"))
@@ -109,64 +123,77 @@ void Race::generate_stats_modifier()
 	}
 }
 
+/**
+ * @brief Based on race and class selected, randomly determine a plausible age for the character.
+ * 
+ * @param complexity - The 'complexity' of the class they have chosen. In essence, D&D 3.5 has some implicit notion of how long a person would need to train
+ * in order to be considered of the specified class. The higher the complexity, the longer it is presumed the character had to study.
+ */
 void Race::determine_age(int complexity)
 {
 	int age;
 	int num_die;
 	int die_face;
-	vector<vector<pair<int,int>>> matrix(7, vector<pair<int,int> >(3));
-	matrix.push_back({{1,4},{1,6},{2,6}});//Human
-	matrix.push_back({{3,6},{5,6},{7,6}});//Dwarf
-	matrix.push_back({{4,6},{6,6},{10,6}});//Elf
-	matrix.push_back({{4,6},{6,6},{9,6}});//Gnome
-	matrix.push_back({{1,6},{2,6},{3,6}});//Half-Elf
-	matrix.push_back({{1,4},{1,6},{2,6}});//Half-Orc
-	matrix.push_back({{2,4},{3,6},{4,6}});//Halfling
+	vector<vector<pair<int, int>>> matrix(7, vector<pair<int, int>>(3));
+	matrix.push_back({{1, 4}, {1, 6}, {2, 6}});	 //Human
+	matrix.push_back({{3, 6}, {5, 6}, {7, 6}});	 //Dwarf
+	matrix.push_back({{4, 6}, {6, 6}, {10, 6}}); //Elf
+	matrix.push_back({{4, 6}, {6, 6}, {9, 6}});	 //Gnome
+	matrix.push_back({{1, 6}, {2, 6}, {3, 6}});	 //Half-Elf
+	matrix.push_back({{1, 4}, {1, 6}, {2, 6}});	 //Half-Orc
+	matrix.push_back({{2, 4}, {3, 6}, {4, 6}});	 //Halfling
 	if (!name.compare("Dwarf"))
 	{
 		num_die = matrix.at(1).at(complexity).first;
 		die_face = matrix.at(1).at(complexity).second;
-		age = 40 + rollXdX(num_die,die_face);
+		age = 40 + rollXdX(num_die, die_face);
 	}
 	if (!name.compare("Elf"))
 	{
 		num_die = matrix.at(2).at(complexity).first;
 		die_face = matrix.at(2).at(complexity).second;
-		age = 110 + rollXdX(num_die,die_face);
+		age = 110 + rollXdX(num_die, die_face);
 	}
 	if (!name.compare("Gnome"))
 	{
 		num_die = matrix.at(3).at(complexity).first;
 		die_face = matrix.at(3).at(complexity).second;
-		age = 40 + rollXdX(num_die,die_face);
+		age = 40 + rollXdX(num_die, die_face);
 	}
 	if (!name.compare("Halfling"))
 	{
 		num_die = matrix.at(6).at(complexity).first;
 		die_face = matrix.at(6).at(complexity).second;
-		age = 20 + rollXdX(num_die,die_face);
+		age = 20 + rollXdX(num_die, die_face);
 	}
 	if (!name.compare("Human"))
 	{
 		num_die = matrix.at(0).at(complexity).first;
 		die_face = matrix.at(0).at(complexity).second;
-		age = 15 + rollXdX(num_die,die_face);
+		age = 15 + rollXdX(num_die, die_face);
 	}
 	if (!name.compare("Half-Elf"))
 	{
 		num_die = matrix.at(4).at(complexity).first;
 		die_face = matrix.at(4).at(complexity).second;
-		age = 20 + rollXdX(num_die,die_face);
+		age = 20 + rollXdX(num_die, die_face);
 	}
 	if (!name.compare("Half-Orc"))
 	{
 		num_die = matrix.at(5).at(complexity).first;
 		die_face = matrix.at(5).at(complexity).second;
-		age = 14 + rollXdX(num_die,die_face);
+		age = 14 + rollXdX(num_die, die_face);
 	}
 	set_age(age);
 }
 
+/**
+ * @brief Based on the race selected, select a plausible height and weight for the character.
+ * 
+ * In D&D 3.5 edition, there appears to be sexual dimorphism present in all races, which is shown
+ * in the base height and weight values being slightly different (typically lower values for females).
+ * 
+ */
 void Race::determine_height_weight()
 {
 	int height_mod;
@@ -282,23 +309,39 @@ void Race::determine_height_weight()
 	set_weight(base_height + (height_mod * weight_mod));
 	set_height(base_weight + height_mod);
 }
+
+/**
+ * @brief Determine the gender of the character based on essentially a coin flip.
+ * 
+ * This matters mostly for determining height and weight. 
+ */
 void Race::determine_gender()
 {
 	int randBin = rand() % 2;
 	set_gender(randBin);
 }
 
-void Race::print_race_info(){
+/**
+ * @brief A helper function that prints out the basic information handled by this CPP file.
+ * This includes:
+ * 	- Race
+ * 	- Sex
+ * 	- Height
+ * 	- Weight
+ * 	- Age
+ */
+void Race::print_race_info()
+{
 	cout << "Race: " << get_race_name() << endl;
-    if (gender == 0)
-    {
-        cout << "Gender: Male" << endl;
-    }
-    else
-    {
-        cout << "Gender: Female " << endl;
-    }
-    cout << "Height: " << get_height() << " Inches" << endl;
-    cout << "Weight: " << get_weight() << " lbs" << endl;
-    cout << "Age: " << get_age() << " Years Old" << endl;
+	if (gender == 0)
+	{
+		cout << "Gender: Male" << endl;
+	}
+	else
+	{
+		cout << "Gender: Female " << endl;
+	}
+	cout << "Height: " << get_height() << " Inches" << endl;
+	cout << "Weight: " << get_weight() << " lbs" << endl;
+	cout << "Age: " << get_age() << " Years Old" << endl;
 }
