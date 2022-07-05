@@ -1,5 +1,5 @@
 /* The Point class Implementation file (Point.cpp) */
-#include "Class.h"
+#include "..\headers\Class.h"
 using namespace std;
 
 // Constructor - The default values are specified in the declaration

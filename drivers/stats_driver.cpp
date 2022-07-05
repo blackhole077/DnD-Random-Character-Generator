@@ -1,6 +1,6 @@
-#include "Stats.h"
-#include "Class.h"
-#include "dnd_template_functions.h"
+#include "..\headers\Stats.h"
+#include "..\headers\Class.h"
+#include "..\headers\dnd_template_functions.h"
 using namespace std;
 int main()
 {

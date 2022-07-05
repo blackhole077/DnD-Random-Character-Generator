@@ -2,7 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include<functional>
-#include "dnd_template_functions.h"
+#include "..\headers\dnd_template_functions.h"
 using namespace std;
 int main(){
     vector<int> test1 = {0,0,-1};

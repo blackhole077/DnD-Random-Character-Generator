@@ -1,4 +1,4 @@
-#include "Class.h"
+#include "..\headers\Class.h"
 #include <iostream>
 #include <map>
 #include <vector>

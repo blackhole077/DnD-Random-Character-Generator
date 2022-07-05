@@ -11,12 +11,12 @@
 #include <iomanip>
 #include <algorithm>
 #include <iterator>
-#include "roll.h"
-#include "utilsDnD.h"
-#include "Stats.h"
-#include "Class.h"
-#include "Character.h"
-#include "Race.h"
+#include "..\headers\roll.h"
+#include "..\headers\utilsDnD.h"
+#include "..\headers\Stats.h"
+#include "..\headers\Class.h"
+#include "..\headers\Character.h"
+#include "..\headers\Race.h"
 using namespace std;
 
 template<typename T> void printElement(T t, const int& num_width, const char& separator)
