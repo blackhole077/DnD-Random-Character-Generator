@@ -33,8 +33,9 @@ private:
   void determine_base_attack_bonus();
   void determine_number_of_attacks();
   void set_stat_distribution();
+  void smart_stat_increase_loop(int level);
+  void smart_stat_increase(int step);
   void set_alignments();
-  void set_skills();
 
 public:
   Class(); //Constructor with no args

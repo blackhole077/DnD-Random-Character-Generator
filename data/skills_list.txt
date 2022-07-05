@@ -1,0 +1,46 @@
+45,4
+appraise,intelligence,False
+balance,dexterity,False
+bluff,charisma,False
+climb,strength,False
+concentration,constitution,False
+craft,intelligence,False
+decipher script,intelligence,True
+diplomacy,charisma,False
+disable device,intelligence,True
+disguise,charisma,False
+escape artist,dexterity,False
+forgery,intelligence,False
+gather information,charisma,False
+handle animal,charisma,True
+heal,wisdom,False
+hide,dexterity,False
+intimidate,charisma,False
+jump,strength,False
+knowledge (arcana),intelligence,True
+knowledge (architecture),intelligence,True
+knowledge (dungeoneering),intelligence,True
+knowledge (geography),intelligence,True
+knowledge (history),intelligence,True
+knowledge (local),intelligence,True
+knowledge (nature),intelligence,True
+knowledge (nobility),intelligence,True
+knowledge (religion),intelligence,True
+knowledge (planes),intelligence,True
+listen,wisdom,False
+move silently,dexterity,False
+open lock,dexterity,True
+perform,charisma,False
+profession,wisdom,False
+ride,dexterity,False
+search,intelligence,False
+sense motive,wisdom,False
+sleight of hand,dexterity,True
+speak language,none,True
+spellcraft,intelligence,True
+spot,wisdom,False
+survival,wisdom,False
+swim,strength,False
+tumble,dexterity,True
+use magical device,charisma,True
+use rope,dexterity,False

@@ -185,6 +185,183 @@ void Class::set_stat_distribution()
 	set_bad_stats(bs);
 }
 
+void Class::smart_stat_increase_loop(int level)
+{
+	if (level < 4)
+	{
+		return;
+	}
+	else
+	{
+		while (level >= 4)
+		{
+			if (level % 4 == 0)
+			{
+				printf("%d mod 4 is 0 right?\n",level);
+				vector<int> choice_weights = {40, 30, 10, 10, 10};
+				int choice_to_make = weighted_distribution(choice_weights);
+				smart_stat_increase(choice_to_make);
+			}
+			level--;
+		}
+		return;
+	}
+}
+
+void Class::smart_stat_increase(int step)
+{
+	vector<int> g_stats;
+	vector<int> b_stats;
+	bool raised = false;
+	int index;
+	cout << "We're going into step " << step << endl;
+	system("pause");
+	switch (step)
+	{
+	case 1:
+	{ //RAISE GOOD STAT THAT IS ODD (UNIFORM RANDOM DIST. IF MORE THAN ONE)
+		g_stats = get_good_stats();
+		index = 0;
+		
+		//This while loop will continue infinitely if all the stats are even numbers. It would work if we skip the "Check if odd" step but that's basically step 2 so yeah.
+		//Consider zipping a copy of the vector with an array {1,2,3} to keep track of which stat would be raised "smartly"? Dunno if this is more expensive or not though, you'll have to check.
+		int counter_odd = 0;
+		for (int x : g_stats)
+		{
+			cout << "Stat " << x << endl;
+			if (x % 2 == 1)
+			{
+				counter_odd++;
+			}
+		}
+		if (counter_odd == 0) //edge cases to address to prevent infinite loop
+		{
+			vector<int> choice_weights = {0, 70, 10, 10, 10};
+			int choice_to_make = weighted_distribution(choice_weights);
+			cout << "Taking step " << choice_to_make << endl;
+			system("pause");
+			smart_stat_increase(choice_to_make);
+
+			//Maybe consider doing this instead:
+			/**
+			 * Weighted Distribution from {40, 30, 10, 10 10} -> {0, 70, 10, 10, 10} of steps 1-5 and do random selection instead?
+			 * Seems a bit strange, considering this wouldn't make sense for the second edge case (all 3 stats are odd), so maybe we'll have to split this if statement
+			 * 
+			 **/
+		}
+		else if (counter_odd == g_stats.size())
+		{
+			smart_stat_increase(2);
+			break;
+		}
+		else
+		{
+			while (!raised)
+			{
+				index = rolldX(g_stats.size()) - 1;
+				if (g_stats.at(index) % 2 == 1)
+				{
+					g_stats.at(index) += 1;
+					raised = true;
+				}
+				else
+				{
+				}
+			}
+		}
+		break;
+		//If there is more than one good stat that is odd
+	}
+	case 2:
+	{ //RAISE GOOD STAT AT RANDOM (UNIFORM RANDOM DIST.)
+		g_stats = get_good_stats();
+		index = rolldX(g_stats.size()) - 1;
+		g_stats.at(index) += 1;
+		break;
+	}
+	case 3:
+	{ //RAISE BAD STAT THAT IS ODD (UNIFORM RANDOM DIST. IF MORE THAN ONE)
+		b_stats = get_bad_stats();
+		int index = 0;
+		//This while loop will continue infinitely if all the stats are even numbers. It would work if we skip the "Check if odd" step but that's basically step 2 so yeah.
+		//Consider zipping a copy of the vector with an array {1,2,3} to keep track of which stat would be raised "smartly"? Dunno if this is more expensive or not though, you'll have to check.
+		int counter_odd = 0;
+		for (int x : b_stats)
+		{
+			if (x % 2 == 1)
+			{
+				counter_odd++;
+			}
+		}
+		if (counter_odd == 0) //edge cases to address to prevent infinite loop
+		{
+			vector<int> choice_weights = {10, 10, 0, 70, 10};
+			int choice_to_make = weighted_distribution(choice_weights);
+			cout << "Taking step " << choice_to_make << endl;
+			smart_stat_increase(choice_to_make);
+
+			//Maybe consider doing this instead:
+			/**
+			 * Weighted Distribution from {40, 30, 10, 10 10} -> {0, 70, 10, 10, 10} of steps 1-5 and do random selection instead?
+			 * Seems a bit strange, considering this wouldn't make sense for the second edge case (all 3 stats are odd), so maybe we'll have to split this if statement
+			 * 
+			 **/
+		}
+		else if (counter_odd == b_stats.size())
+		{
+			smart_stat_increase(4);
+			break;
+		}
+		else
+		{
+			while (!raised)
+			{
+				index = rolldX(b_stats.size()) - 1;
+				if (b_stats.at(index) % 2 == 1)
+				{
+					b_stats.at(index) += 1;
+					raised = true;
+				}
+				else
+				{
+				}
+			}
+		}
+		break;
+		//If there is more than one good stat that is odd
+	}
+	case 4:
+	{ //RAISE BAD STAT AT RANDOM (UNIFORM RANDOM DIST.)
+		g_stats = get_good_stats();
+		index = rolldX(g_stats.size()) - 1;
+		g_stats.at(index) += 1;
+		break;
+	}
+	case 5:
+	{ //RAISE ANY STAT AT RANDOM (UNIFORM RANDOM DIST.)
+		index = rolldX(6) - 1;
+		if (index < 3)
+		{
+			g_stats = get_good_stats();
+			g_stats.at(index) += 1;
+			return;
+		}
+		else
+		{
+			b_stats = get_bad_stats();
+			b_stats.at(index) += 1;
+			return;
+		}
+		break;
+	}
+	default:
+	{ //DEFINITELY SHOULD NOT END UP HERE, LOG AN ERROR AND CALL IT A DAY (OR JUST CALL STEP 5 I DUNNO)
+		cout << "Well you\'re not really supposed to be in this case, so we\'re gonna call case 5 and leave it at that." << endl;
+		smart_stat_increase(5);
+	}
+	}
+}
+
 void Class::determine_base_attack_bonus()
 {
 	int base_attack_bonus = 0;
@@ -424,224 +601,6 @@ void Class::set_alignments()
 	}
 }
 
-void Class::set_skills()
-{
-	if (!name.compare("Barbarian"))
-	{
-		//Barbarian alignment: Chaotic only
-		class_skills.push_back(std::make_pair("climb", "strength"));
-		class_skills.push_back(std::make_pair("craft", "intelligence"));
-		class_skills.push_back(std::make_pair("handle animal", "charisma"));
-		class_skills.push_back(std::make_pair("intimidate", "charisma"));
-		class_skills.push_back(std::make_pair("jump", "strength"));
-		class_skills.push_back(std::make_pair("listen", "wisdom"));
-		class_skills.push_back(std::make_pair("ride", "dexterity"));
-		class_skills.push_back(std::make_pair("survival", "wisdom"));
-		class_skills.push_back(std::make_pair("swim", "strength"));
-	}
-	if (!name.compare("Bard"))
-	{
-		//Bard alignment: Non-Lawful
-		class_skills.push_back(std::make_pair("appraise", "intelligence"));
-		class_skills.push_back(std::make_pair("balance", "dexterity"));
-		class_skills.push_back(std::make_pair("bluff", "charisma"));
-		class_skills.push_back(std::make_pair("climb", "strength"));
-		class_skills.push_back(std::make_pair("concentration", "constitution"));
-		class_skills.push_back(std::make_pair("craft", "intelligence"));
-		class_skills.push_back(std::make_pair("decipher script", "intelligence"));
-		class_skills.push_back(std::make_pair("diplomacy", "charisma"));
-		class_skills.push_back(std::make_pair("disguise", "charisma"));
-		class_skills.push_back(std::make_pair("escape artist", "dexterity"));
-		class_skills.push_back(std::make_pair("gather information", "charisma"));
-		class_skills.push_back(std::make_pair("hide", "dexterity"));
-		class_skills.push_back(std::make_pair("jump", "strength"));
-		class_skills.push_back(std::make_pair("knowledge arcana", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge architecture", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge dungeoneering", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge geography", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge history", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge local", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge nature", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge nobility", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge psionics", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge religion", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge planes", "intelligence"));
-		class_skills.push_back(std::make_pair("listen", "wisdom"));
-		class_skills.push_back(std::make_pair("move silently", "dexterity"));
-		class_skills.push_back(std::make_pair("perform", "charisma"));
-		class_skills.push_back(std::make_pair("profession", "wisdom"));
-		class_skills.push_back(std::make_pair("sense motive", "wisdom"));
-		class_skills.push_back(std::make_pair("sleight of hand", "dexterity"));
-		class_skills.push_back(std::make_pair("spellcraft", "intelligence"));
-		class_skills.push_back(std::make_pair("swim", "strength"));
-		class_skills.push_back(std::make_pair("tumble", "dexterity"));
-		class_skills.push_back(std::make_pair("use magic device", "charisma"));
-	}
-	if (!name.compare("Cleric"))
-	{
-		//Cleric alignment: Dependent on deity
-
-		class_skills.push_back(std::make_pair("concentration", "constitution"));
-		class_skills.push_back(std::make_pair("craft", "intelligence"));
-		class_skills.push_back(std::make_pair("diplomacy", "charisma"));
-		class_skills.push_back(std::make_pair("heal", "wisdom"));
-		class_skills.push_back(std::make_pair("knowledge arcana", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge history", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge religion", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge planes", "intelligence"));
-		class_skills.push_back(std::make_pair("profession", "wisdom"));
-		class_skills.push_back(std::make_pair("spellcraft", "intelligence"));
-	}
-	if (!name.compare("Druid"))
-	{
-		//Druid alignment: Neutral only
-		class_skills.push_back(std::make_pair("concentration", "constitution"));
-		class_skills.push_back(std::make_pair("craft", "intelligence"));
-		class_skills.push_back(std::make_pair("diplomacy", "charisma"));
-		class_skills.push_back(std::make_pair("handle animal", "charisma"));
-		class_skills.push_back(std::make_pair("heal", "wisdom"));
-		class_skills.push_back(std::make_pair("knowledge nature", "intelligence"));
-		class_skills.push_back(std::make_pair("listen", "wisdom"));
-		class_skills.push_back(std::make_pair("profession", "wisdom"));
-		class_skills.push_back(std::make_pair("ride", "dexterity"));
-		class_skills.push_back(std::make_pair("spellcraft", "intelligence"));
-		class_skills.push_back(std::make_pair("spot", "wisdom"));
-		class_skills.push_back(std::make_pair("survival", "wisdom"));
-		class_skills.push_back(std::make_pair("swim", "strength"));
-	}
-	if (!name.compare("Fighter"))
-	{
-		//Fighter alignment: Any
-		class_skills.push_back(std::make_pair("climb", "strength"));
-		class_skills.push_back(std::make_pair("craft", "intelligence"));
-		class_skills.push_back(std::make_pair("handle animal", "charisma"));
-		class_skills.push_back(std::make_pair("intimidate", "charisma"));
-		class_skills.push_back(std::make_pair("jump", "strength"));
-		class_skills.push_back(std::make_pair("ride", "dexterity"));
-		class_skills.push_back(std::make_pair("swim", "strength"));
-	}
-	if (!name.compare("Monk"))
-	{
-		//Monk alignment: Lawful only
-		class_skills.push_back(std::make_pair("balance", "dexterity"));
-		class_skills.push_back(std::make_pair("climb", "strength"));
-		class_skills.push_back(std::make_pair("concentration", "constitution"));
-		class_skills.push_back(std::make_pair("craft", "intelligence"));
-		class_skills.push_back(std::make_pair("diplomacy", "charisma"));
-		class_skills.push_back(std::make_pair("escape artist", "dexterity"));
-		class_skills.push_back(std::make_pair("heal", "wisdom"));
-		class_skills.push_back(std::make_pair("knowledge nobility", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge religion", "intelligence"));
-		class_skills.push_back(std::make_pair("profession", "wisdom"));
-		class_skills.push_back(std::make_pair("ride", "dexterity"));
-		class_skills.push_back(std::make_pair("sense motive", "wisdom"));
-	}
-	if (!name.compare("Paladin"))
-	{
-		//Paladin alignment: Lawful Good only
-		class_skills.push_back(std::make_pair("concentration", "constitution"));
-		class_skills.push_back(std::make_pair("craft", "intelligence"));
-		class_skills.push_back(std::make_pair("diplomacy", "charisma"));
-		class_skills.push_back(std::make_pair("handle animal", "charisma"));
-		class_skills.push_back(std::make_pair("hide", "dexterity"));
-		class_skills.push_back(std::make_pair("jump", "strength"));
-		class_skills.push_back(std::make_pair("knowledge arcana", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge religion", "intelligence"));
-		class_skills.push_back(std::make_pair("listen", "wisdom"));
-		class_skills.push_back(std::make_pair("move silently", "dexterity"));
-		class_skills.push_back(std::make_pair("perform", "charisma"));
-		class_skills.push_back(std::make_pair("profession", "wisdom"));
-		class_skills.push_back(std::make_pair("sense motive", "wisdom"));
-		class_skills.push_back(std::make_pair("spot", "wisdom"));
-		class_skills.push_back(std::make_pair("swim", "strength"));
-		class_skills.push_back(std::make_pair("tumble", "dexterity"));
-	}
-	if (!name.compare("Ranger"))
-	{
-		//Ranger alignment: Any
-		class_skills.push_back(std::make_pair("climb", "strength"));
-		class_skills.push_back(std::make_pair("concentration", "constitution"));
-		class_skills.push_back(std::make_pair("craft", "intelligence"));
-		class_skills.push_back(std::make_pair("handle animal", "charisma"));
-		class_skills.push_back(std::make_pair("heal", "wisdom"));
-		class_skills.push_back(std::make_pair("hide", "dexterity"));
-		class_skills.push_back(std::make_pair("jump", "strength"));
-		class_skills.push_back(std::make_pair("knowledge dungeoneering", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge geography", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge nature", "intelligence"));
-		class_skills.push_back(std::make_pair("listen", "wisdom"));
-		class_skills.push_back(std::make_pair("move silently", "dexterity"));
-		class_skills.push_back(std::make_pair("profession", "wisdom"));
-		class_skills.push_back(std::make_pair("ride", "dexterity"));
-		class_skills.push_back(std::make_pair("search", "intelligence"));
-		class_skills.push_back(std::make_pair("spot", "wisdom"));
-		class_skills.push_back(std::make_pair("survival", "wisdom"));
-		class_skills.push_back(std::make_pair("swim", "strength"));
-		class_skills.push_back(std::make_pair("use rope", "dexterity"));
-	}
-	if (!name.compare("Rogue"))
-	{
-		//Rogue alignment: Any
-		class_skills.push_back(std::make_pair("appraise", "intelligence"));
-		class_skills.push_back(std::make_pair("balance", "dexterity"));
-		class_skills.push_back(std::make_pair("bluff", "charisma"));
-		class_skills.push_back(std::make_pair("climb", "strength"));
-		class_skills.push_back(std::make_pair("craft", "intelligence"));
-		class_skills.push_back(std::make_pair("decipher script", "intelligence"));
-		class_skills.push_back(std::make_pair("diplomacy", "charisma"));
-		class_skills.push_back(std::make_pair("disable device", "intelligence"));
-		class_skills.push_back(std::make_pair("disguise", "charisma"));
-		class_skills.push_back(std::make_pair("escape artist", "dexterity"));
-		class_skills.push_back(std::make_pair("forgery", "intelligence"));
-		class_skills.push_back(std::make_pair("gather information", "charisma"));
-		class_skills.push_back(std::make_pair("hide", "dexterity"));
-		class_skills.push_back(std::make_pair("intimidate", "charisma"));
-		class_skills.push_back(std::make_pair("jump", "strength"));
-		class_skills.push_back(std::make_pair("knowledge local", "intelligence"));
-		class_skills.push_back(std::make_pair("listen", "wisdom"));
-		class_skills.push_back(std::make_pair("move silently", "dexterity"));
-		class_skills.push_back(std::make_pair("open lock", "dexterity"));
-		class_skills.push_back(std::make_pair("perform", "charisma"));
-		class_skills.push_back(std::make_pair("search", "intelligence"));
-		class_skills.push_back(std::make_pair("sense motive", "wisdom"));
-		class_skills.push_back(std::make_pair("sleight of hand", "dexterity"));
-		class_skills.push_back(std::make_pair("spot", "wisdom"));
-		class_skills.push_back(std::make_pair("swim", "strength"));
-		class_skills.push_back(std::make_pair("tumble", "dexterity"));
-		class_skills.push_back(std::make_pair("use magic device", "charisma"));
-		class_skills.push_back(std::make_pair("use rope", "dexterity"));
-	}
-	if (!name.compare("Sorcerer"))
-	{
-		//Sorcerer alignment: Any
-		class_skills.push_back(std::make_pair("bluff", "charisma"));
-		class_skills.push_back(std::make_pair("concentration", "constitution"));
-		class_skills.push_back(std::make_pair("craft", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge arcana", "intelligence"));
-		class_skills.push_back(std::make_pair("profession", "wisdom"));
-		class_skills.push_back(std::make_pair("spellcraft", "intelligence"));
-	}
-	if (!name.compare("Wizard"))
-	{
-		//Wizard alignment: Any
-		class_skills.push_back(std::make_pair("concentration", "constitution"));
-		class_skills.push_back(std::make_pair("craft", "intelligence"));
-		class_skills.push_back(std::make_pair("decipher script", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge arcana", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge architecture", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge dungeoneering", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge geography", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge history", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge local", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge nature", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge nobility", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge psionics", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge religion", "intelligence"));
-		class_skills.push_back(std::make_pair("knowledge planes", "intelligence"));
-		class_skills.push_back(std::make_pair("profession", "wisdom"));
-		class_skills.push_back(std::make_pair("spellcraft", "intelligence"));
-	}
-}
 
 // Public Functions
 
@@ -676,12 +635,38 @@ void Class::create_character()
 	}
 	class_level = input_level;
 	cout << endl;
-	set_skills();
+
+	/**
+	 * The actual order that leveling up is supposed to go in:
+	 * 1. Choose Class to advance in (We're assuming this is not going to change for this program)
+	 * 2. Adjust Base Attack Bonus (Since 1 does not change, this does not deviate either)
+	 * 3. Adjust Base Save Bonuses (Since 1 does not change, this does not deviate either)
+	 * 4. Assign Ability Score Increase (if level % 4 == 0) (This will need to be called every 4th level)
+	 * 5. Roll Hit Points for level (This would need to be called at every level instead of calcualted directly)
+	 * 6. Calculate and assign skill points (This would need to be called at every level instead of calculated directly)
+	 * 7. Assign feat if applicable for level (Not a featuer yet)
+	 * 8. Select spells if applicable (Not a feature yet)
+	 * 9. Assign Class Features (Not a feature yet)
+	 * 
+	 * So, based on what we've noted here, our procedure should look something like this:
+	 * 1. Set class
+	 * 2. Calculate the BAB and Base Saves as if player takes only that class up to selected level
+	 * 3. Determine Hit Die based on class
+	 * 4. Set the base stats.
+	 * 5. Begin the level up procedure 
+	 * 	5a. Check if level % 4 is 0; If it is, do the smart_ability_increase, else continue;
+	 * 	5b. Roll HD and add (updated) con score to the total_hitpoints
+	 * 	5c. Calculate available skill points and add (updated) int modifier to the total_skillpoints
+	 * 	5d. Distribute skill points
+	 * 6. Proceed as normal.
+	 *
+	 **/
 	determine_base_attack_bonus();
 	determine_number_of_attacks();
 	determine_complexity();
 	set_stat_distribution();
-	determine_hit_die();
+	determine_hit_die();//Just determines what die to roll for HP
+	smart_stat_increase_loop(class_level);
 	determine_deity();
 	set_alignments();
 	determine_alignment();

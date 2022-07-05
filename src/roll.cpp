@@ -1,5 +1,4 @@
-#include "..\headers\roll.h"
-#include <random>
+#include "../headers/roll.h"
 using namespace std;
 
 // this sets up a static distribution for the cdf, lowering time issues
@@ -44,4 +43,28 @@ int rolldX(const int numFace)
 	roll = (die(rd));
 	return roll;
 	//Returns the address to the first element of the array
+}
+
+int weighted_distribution(vector<int> weights)
+{
+	int sum_of_weight = 0;
+	int num_choices = weights.size();
+	for (int i = 0; i < num_choices; i++)
+	{
+		sum_of_weight += weights.at(i);
+	}
+	printf("Sum of the weights is %d\n",sum_of_weight);
+	int rnd = rolldX(sum_of_weight);
+	printf("Our random number is %d\n",rnd);
+	for (int i = 1; i <= num_choices; i++)
+	{
+		int comparison = weights.at(i-1);
+		if (rnd < comparison)
+		{
+			return i;
+		}
+		rnd -= comparison;
+	}
+	assert (!"should never get here");
+	return -1;
 }
