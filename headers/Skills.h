@@ -65,6 +65,9 @@ public:
  /*Print out all class skills*/
   void print_class_skills();
 
+
+  void set_ignore_skills(std::string class_name);
+
   /*
    Given a class name, initialize the class skills associated with
    said class. This will not populate the vector if the name provided
