@@ -12,7 +12,7 @@ Class::Class()
 	int class_hit_die; //The Dice you roll for hp
 	std::vector<int> good_stats;
 	std::vector<int> bad_stats;
-	std::vector<std::pair<int, int>> pAlign;
+	std::vector<std::pair<int, int>> player_alignment;
 	std::vector<std::pair<std::string, std::string>> class_skills;
 	std::string alignment;
 	std::string deity;
@@ -22,41 +22,41 @@ Class::Class()
 }
 
 // Getters
-int Class::get_complexity() const
+const int Class::get_complexity()
 {
 	return complexity;
 } // Getter
-int Class::get_class_level() const
+const int Class::get_class_level()
 {
 	return class_level;
 } // Getter
-int Class::get_class_hit_die() const
+const int Class::get_class_hit_die()
 {
 	return class_hit_die;
 }
-int Class::get_base_attack_bonus() const
+const int Class::get_base_attack_bonus()
 {
 	return base_attack_bonus;
 }
-int Class::get_number_of_attacks() const
+const int Class::get_number_of_attacks()
 {
 	return number_of_attacks;
 }
-std::string Class::get_name() const
+const std::string Class::get_name()
 {
 	return name;
 }
-int Class::get_skill_rank_gain() const
+const int Class::get_skill_rank_gain()
 {
 	return skill_rank_gain;
 }
 
-std::vector<int> Class::get_good_stats() const
+const std::vector<int> Class::get_good_stats()
 {
 	return good_stats;
 }
 
-std::vector<int> Class::get_bad_stats() const
+const std::vector<int> Class::get_bad_stats()
 {
 	return bad_stats;
 }
@@ -102,7 +102,16 @@ void Class::set_bad_stats(vector<int> vector)
 }
 
 //Misc Functions
-void Class::determine_complexity(){
+/**
+ * @brief Determine the 'complexity' of the class that is chosen.
+ * 
+ * 	This is only really useful in making sure the ages of the character of said class lines up with
+ * 	how much time the creators of D&D 3.5 think training for that class would take. This means that,
+ * 	in essence, someone would be spending much more of their life studying wizardry or martial arts
+ * 	than they would studying rogue...stuff.
+ */
+void Class::determine_complexity()
+{
 	if (!name.compare("Barbarian") || !name.compare("Rogue") || !name.compare("Sorcerer"))
 	{
 		complexity = 1;
@@ -115,8 +124,14 @@ void Class::determine_complexity(){
 	{
 		complexity = 3;
 	}
-
 }
+/**
+ * @brief Determine what the HD of the class selected is.
+ * 	
+ * 	This matters mainly for determining how much HP you gain per level as, in essence,
+ * 	it is the die that you roll when leveling up. There are other uses for it, such as
+ * 	for spells determining how many HD of creatures can be affected by spells and whatnot.
+ */
 void Class::determine_hit_die()
 {
 	if (!name.compare("Sorcerer") || !name.compare("Wizard"))
@@ -131,60 +146,84 @@ void Class::determine_hit_die()
 	{
 		class_hit_die = 8;
 	}
-	if(!name.compare("Paladin")||!name.compare("Fighter")){
+	if (!name.compare("Paladin") || !name.compare("Fighter"))
+	{
 		class_hit_die = 10;
-
 	}
-	if(!name.compare("Barbarian")){
+	if (!name.compare("Barbarian"))
+	{
 		class_hit_die = 12;
 	}
 }
+/**
+ * @brief Determine which stats should be prioritized over others when creating a new character.
+ * 	
+ * 	This is especially important in D&D 3.5 since characters are much more dependent on having good stats to function.
+ * 	Plus, nobody wants to roll a character that doesn't really work (i.e., High CHA Monk with low WIS? C'mon.) 
+ * 
+ * 	NOTE: Since it is not exactly clear due to using numeric values, here is a chart for what each number corresponds to.
+ *		1 - Strength
+ * 		2 - Dexterity
+ * 		3 - Constitution
+ * 		4 - Intelligence
+ * 		5 - Wisdom
+ * 		6 - Charisma 
+ */
 void Class::set_stat_distribution()
 {
-	std::vector<int> gs;
-	std::vector<int> bs;
+	// The vector of stats that are preferred, necessary or otherwise useful for the class to function
+	std::vector<int> good_stats_vector;
+	// The vector of stats that might be nice to have, or might just be the dump stat for the class.
+	std::vector<int> bad_stats_vector;
 	if (!name.compare("Barbarian") || !name.compare("Fighter"))
 	{
-		gs = {1, 2, 3};
-		bs = {4, 5, 6};
+		good_stats_vector = {1, 2, 3};
+		bad_stats_vector = {4, 5, 6};
 	}
 	if (!name.compare("Bard") || !name.compare("Rogue"))
 	{
-		gs = {2, 4, 6};
-		bs = {1, 3, 5};
+		good_stats_vector = {2, 4, 6};
+		bad_stats_vector = {1, 3, 5};
 	}
 	if (!name.compare("Druid") || !name.compare("Ranger"))
 	{
-		gs = {2, 3, 5};
-		bs = {1, 4, 6};
+		good_stats_vector = {2, 3, 5};
+		bad_stats_vector = {1, 4, 6};
 	}
-	if(!name.compare("Cleric")){
-		gs = {1, 3, 5};
-		bs = {2, 4, 6};
-
+	if (!name.compare("Cleric"))
+	{
+		good_stats_vector = {1, 3, 5};
+		bad_stats_vector = {2, 4, 6};
 	}
-	if(!name.compare("Monk")){
-		gs = {1, 2, 5};
-		bs = {3, 4, 6};
+	if (!name.compare("Monk"))
+	{
+		good_stats_vector = {1, 2, 5};
+		bad_stats_vector = {3, 4, 6};
 	}
-	if(!name.compare("Paladin")){
-		gs = {1, 5, 6};
-		bs = {2, 3, 4};
-
+	if (!name.compare("Paladin"))
+	{
+		good_stats_vector = {1, 5, 6};
+		bad_stats_vector = {2, 3, 4};
 	}
-	if(!name.compare("Sorcerer")){
-		gs = {2, 3, 6};
-		bs = {1, 4, 5};
-
+	if (!name.compare("Sorcerer"))
+	{
+		good_stats_vector = {2, 3, 6};
+		bad_stats_vector = {1, 4, 5};
 	}
-	if(!name.compare("Wizard")){
-		gs = {2, 3, 4};
-		bs = {1, 5, 6};
+	if (!name.compare("Wizard"))
+	{
+		good_stats_vector = {2, 3, 4};
+		bad_stats_vector = {1, 5, 6};
 	}
-	set_good_stats(gs);
-	set_bad_stats(bs);
+	set_good_stats(good_stats_vector);
+	set_bad_stats(bad_stats_vector);
 }
 
+/**
+ * @brief A helper function that simulates the process of (retroactively?) selecting your Ability Score Increases (ASIs) which are gained every 4 levels.
+ * 
+ * @param level The level of the character that is being rolled. For example, if they are level 15, they should have done their ASI selection 3 times (4, 8, 12).
+ */
 void Class::smart_stat_increase_loop(int level)
 {
 	if (level < 4)
@@ -197,7 +236,6 @@ void Class::smart_stat_increase_loop(int level)
 		{
 			if (level % 4 == 0)
 			{
-				printf("%d mod 4 is 0 right?\n",level);
 				vector<int> choice_weights = {40, 30, 10, 10, 10};
 				int choice_to_make = weighted_distribution(choice_weights);
 				smart_stat_increase(choice_to_make);
@@ -208,25 +246,40 @@ void Class::smart_stat_increase_loop(int level)
 	}
 }
 
-void Class::smart_stat_increase(int step)
+/**
+ * @brief Attempt to increase the stats of the character using heuristics and some randomness.
+ * 
+ * To ensure that ASIs are not spent indiscriminately and still provide some benefit to the playability of the
+ * randomly selected character, some heuristics are set in place based on developer experience with playing D&D 3.5 Edition.
+ * These are then assigned weighted probabilities and the process takes off from there.
+ * 
+ * @param stat_increase_plan_index - The index that represents which plan of action will be taken. They are as follows:
+ * 	Plan 1: Raise a 'good stat' that is an odd value, using random uniform distribution if there is more than one.
+ * 	Plan 2: Raise a 'good stat' using random uniform distribution.
+ * 	Plan 3: Raise a 'bad stat' that is an odd value, using random distribution if there is more than one.
+ * 	Plan 2: Raise a 'bad stat' using random uniform distribution.
+ * 	Plan 5: Raise potentially any stat using random distribution.
+ * 	Plan X: If we somehow don't meet the criteria for any of the aforementioned plans, then automatically chose Plan 5.
+ */
+void Class::smart_stat_increase(int stat_increase_plan_index)
 {
-	vector<int> g_stats;
-	vector<int> b_stats;
+	vector<int> good_stats;
+	vector<int> bad_stats;
 	bool raised = false;
 	int index;
-	cout << "We're going into step " << step << endl;
+	cout << "We're going into stat_increase_plan_index " << stat_increase_plan_index << endl;
 	system("pause");
-	switch (step)
+	switch (stat_increase_plan_index)
 	{
 	case 1:
 	{ //RAISE GOOD STAT THAT IS ODD (UNIFORM RANDOM DIST. IF MORE THAN ONE)
-		g_stats = get_good_stats();
+		good_stats = get_good_stats();
 		index = 0;
-		
+
 		//This while loop will continue infinitely if all the stats are even numbers. It would work if we skip the "Check if odd" step but that's basically step 2 so yeah.
 		//Consider zipping a copy of the vector with an array {1,2,3} to keep track of which stat would be raised "smartly"? Dunno if this is more expensive or not though, you'll have to check.
 		int counter_odd = 0;
-		for (int x : g_stats)
+		for (int x : good_stats)
 		{
 			cout << "Stat " << x << endl;
 			if (x % 2 == 1)
@@ -249,7 +302,7 @@ void Class::smart_stat_increase(int step)
 			 * 
 			 **/
 		}
-		else if (counter_odd == g_stats.size())
+		else if (counter_odd == good_stats.size())
 		{
 			smart_stat_increase(2);
 			break;
@@ -258,10 +311,10 @@ void Class::smart_stat_increase(int step)
 		{
 			while (!raised)
 			{
-				index = rolldX(g_stats.size()) - 1;
-				if (g_stats.at(index) % 2 == 1)
+				index = rolldX(good_stats.size()) - 1;
+				if (good_stats.at(index) % 2 == 1)
 				{
-					g_stats.at(index) += 1;
+					good_stats.at(index) += 1;
 					raised = true;
 				}
 				else
@@ -274,19 +327,19 @@ void Class::smart_stat_increase(int step)
 	}
 	case 2:
 	{ //RAISE GOOD STAT AT RANDOM (UNIFORM RANDOM DIST.)
-		g_stats = get_good_stats();
-		index = rolldX(g_stats.size()) - 1;
-		g_stats.at(index) += 1;
+		good_stats = get_good_stats();
+		index = rolldX(good_stats.size()) - 1;
+		good_stats.at(index) += 1;
 		break;
 	}
 	case 3:
 	{ //RAISE BAD STAT THAT IS ODD (UNIFORM RANDOM DIST. IF MORE THAN ONE)
-		b_stats = get_bad_stats();
+		bad_stats = get_bad_stats();
 		int index = 0;
 		//This while loop will continue infinitely if all the stats are even numbers. It would work if we skip the "Check if odd" step but that's basically step 2 so yeah.
 		//Consider zipping a copy of the vector with an array {1,2,3} to keep track of which stat would be raised "smartly"? Dunno if this is more expensive or not though, you'll have to check.
 		int counter_odd = 0;
-		for (int x : b_stats)
+		for (int x : bad_stats)
 		{
 			if (x % 2 == 1)
 			{
@@ -307,7 +360,7 @@ void Class::smart_stat_increase(int step)
 			 * 
 			 **/
 		}
-		else if (counter_odd == b_stats.size())
+		else if (counter_odd == bad_stats.size())
 		{
 			smart_stat_increase(4);
 			break;
@@ -316,10 +369,10 @@ void Class::smart_stat_increase(int step)
 		{
 			while (!raised)
 			{
-				index = rolldX(b_stats.size()) - 1;
-				if (b_stats.at(index) % 2 == 1)
+				index = rolldX(bad_stats.size()) - 1;
+				if (bad_stats.at(index) % 2 == 1)
 				{
-					b_stats.at(index) += 1;
+					bad_stats.at(index) += 1;
 					raised = true;
 				}
 				else
@@ -332,9 +385,9 @@ void Class::smart_stat_increase(int step)
 	}
 	case 4:
 	{ //RAISE BAD STAT AT RANDOM (UNIFORM RANDOM DIST.)
-		g_stats = get_good_stats();
-		index = rolldX(g_stats.size()) - 1;
-		g_stats.at(index) += 1;
+		good_stats = get_good_stats();
+		index = rolldX(good_stats.size()) - 1;
+		good_stats.at(index) += 1;
 		break;
 	}
 	case 5:
@@ -342,14 +395,14 @@ void Class::smart_stat_increase(int step)
 		index = rolldX(6) - 1;
 		if (index < 3)
 		{
-			g_stats = get_good_stats();
-			g_stats.at(index) += 1;
+			good_stats = get_good_stats();
+			good_stats.at(index) += 1;
 			return;
 		}
 		else
 		{
-			b_stats = get_bad_stats();
-			b_stats.at(index) += 1;
+			bad_stats = get_bad_stats();
+			bad_stats.at(index) += 1;
 			return;
 		}
 		break;
@@ -361,7 +414,16 @@ void Class::smart_stat_increase(int step)
 	}
 	}
 }
-
+/**
+ * @brief Determine the base attack bonus of the class.
+ * 
+ * For some reason that eludes me, D&D 3.5 edition thought that they should have Base Attack Bonus (BAB)
+ * progress differently for certain classes. Namely, most of the martial classes got their BAB equal to their class level,
+ * other classes got theirs at some weird progression (noted below), and then Sorcerer and Wizard were absolutely shafted.
+ * 
+ * I still cannot really understand why the design went in this direction, but luckily this is all stripped out in 5e.
+ * 
+ */
 void Class::determine_base_attack_bonus()
 {
 	int base_attack_bonus = 0;
@@ -394,6 +456,13 @@ void Class::determine_base_attack_bonus()
 	set_base_attack_bonus(base_attack_bonus);
 }
 
+/**
+ * @brief Determine how many times the character can attack in a turn.
+ * 
+ * 	Basically the forumla is simple. For every +5 you have in your BAB, you get another attack.
+ * 	When you no longer have enough BAB, then you don't get more attacks.
+ * 
+ */
 void Class::determine_number_of_attacks()
 {
 	int n_attacks = 1;
@@ -406,6 +475,10 @@ void Class::determine_number_of_attacks()
 	set_number_of_attacks(n_attacks);
 }
 
+/**
+ * @brief Determine the character's alignment after considering all constraints placed in advance (i.e., class selected).
+ * 
+ */
 void Class::determine_alignment()
 {
 	std::map<pair<int, int>, string> alignments;
@@ -421,9 +494,9 @@ void Class::determine_alignment()
 	alignments.insert(pair<pair<int, int>, string>(pair<int, int>(1, 2), "Neutral Evil"));
 	alignments.insert(pair<pair<int, int>, string>(pair<int, int>(2, 2), "Chaotic Evil"));
 
-	int numFace = pAlign.size();
+	int numFace = player_alignment.size();
 	int roll = rollXdX(1, numFace);
-	std::pair<int, int> key = pAlign.at(roll - 1);
+	std::pair<int, int> key = player_alignment.at(roll - 1);
 	alignment = alignments.at(key);
 }
 
@@ -433,79 +506,91 @@ should the evidence point to the contrary. Much like chooseClass, there is simpl
 */
 void Class::determine_deity()
 {
-	static string possibleDeities[19] = {"Boccob", "Corellon Larethian", "Ehlonna", "Erythnul", "Fharlanghn", "Garl Glittergold", "Gruumsh", "Hieroneous", "Hextor", "Kord", "Moradin", "Nerull", "Obad-Hai", "Olidammara", "Pelor", "St. Cuthbert", "Vecna", "Wee Jas", "Yondalla"};
+	static string possible_deities[19] = {"Boccob", "Corellon Larethian", "Ehlonna", "Erythnul", "Fharlanghn", "Garl Glittergold", "Gruumsh", "Hieroneous", "Hextor", "Kord", "Moradin", "Nerull", "Obad-Hai", "Olidammara", "Pelor", "St. Cuthbert", "Vecna", "Wee Jas", "Yondalla"};
 	int roll;
-	roll = rolldX(possibleDeities->size());
+	roll = rolldX(possible_deities->size());
 	int indx = roll - 1;
-	string god = possibleDeities[indx];
-	deity = god;
+	string selected_deity = possible_deities[indx];
+	deity = selected_deity;
 }
 
-/*
-Due to extra restrictions that are placed upon the Cleric class, this function is only called when the class selected is "Cleric".
-It is meant to adjust for alignment restrictions and therefore is called before determine_alignment.
-*/
+/**
+ * @brief Select the deity that a cleric will worship, to inform what alignments are valid for their character.
+ *	
+ *	Due to extra restrictions that are placed upon the Cleric class, this function is only called when the class selected is "Cleric".
+ *	It is meant to adjust for alignment restrictions and therefore is called before determine_alignment.
+ * 	NOTE: Another thing to note is, clerics are allowed to be AT MOST ONE step away from their deity chosen. 
+ *  This means that, for example, a Chaotic Good character could worship a Neutral Good or Chaotic Neutral deity and still 'be fine'.
+ * 
+ */
 void Class::determine_cleric_patronage()
 {
-	std::map<string, std::pair<int, int>> pAlignDeity;
-	pAlignDeity.insert(pair<string, pair<int, int>>("Boccob", std::pair<int, int>(1, 1)));			   //							True Neutral
-	pAlignDeity.insert(pair<string, pair<int, int>>("Corellon Larethian", std::pair<int, int>(2, 0))); //				Chaotic Good
-	pAlignDeity.insert(pair<string, pair<int, int>>("Ehlonna", std::pair<int, int>(1, 0)));			   //							Neutral Good
-	pAlignDeity.insert(pair<string, pair<int, int>>("Erythnul", std::pair<int, int>(2, 2)));		   //							Chaotic Evil
-	pAlignDeity.insert(pair<string, pair<int, int>>("Fharlanghn", std::pair<int, int>(1, 1)));		   //						True Neutral
-	pAlignDeity.insert(pair<string, pair<int, int>>("Garl Glittergold", std::pair<int, int>(1, 0)));   //					Neutral Good
-	pAlignDeity.insert(pair<string, pair<int, int>>("Gruumsh", std::pair<int, int>(2, 2)));			   //							Chaotic Evil
-	pAlignDeity.insert(pair<string, pair<int, int>>("Hieroneous", std::pair<int, int>(0, 0)));		   //						Lawful Good
-	pAlignDeity.insert(pair<string, pair<int, int>>("Hextor", std::pair<int, int>(0, 2)));			   //							Lawful Evil
-	pAlignDeity.insert(pair<string, pair<int, int>>("Kord", std::pair<int, int>(2, 0)));			   //								Chaotic Good
-	pAlignDeity.insert(pair<string, pair<int, int>>("Moradin", std::pair<int, int>(0, 0)));			   //							Lawful Good
-	pAlignDeity.insert(pair<string, pair<int, int>>("Nerull", std::pair<int, int>(1, 2)));			   //							Neutral Evil
-	pAlignDeity.insert(pair<string, pair<int, int>>("Obad-Hai", std::pair<int, int>(1, 1)));		   //							True Neutral
-	pAlignDeity.insert(pair<string, pair<int, int>>("Olidammara", std::pair<int, int>(2, 1)));		   //						Chaotic Neutral
-	pAlignDeity.insert(pair<string, pair<int, int>>("Pelor", std::pair<int, int>(1, 0)));			   //								Neutral Good
-	pAlignDeity.insert(pair<string, pair<int, int>>("St. Cuthbert", std::pair<int, int>(0, 1)));	   //						Lawful Neutral
-	pAlignDeity.insert(pair<string, pair<int, int>>("Vecna", std::pair<int, int>(1, 2)));			   //								Neutral Evil
-	pAlignDeity.insert(pair<string, pair<int, int>>("Wee Jas", std::pair<int, int>(0, 1)));			   //							Lawful Neutral
-	pAlignDeity.insert(pair<string, pair<int, int>>("Yondalla", std::pair<int, int>(0, 0)));		   //							Lawful Good
+	std::map<string, std::pair<int, int>> player_alignment_deities;
+	player_alignment_deities.insert(pair<string, pair<int, int>>("Boccob", std::pair<int, int>(1, 1)));				//							True Neutral
+	player_alignment_deities.insert(pair<string, pair<int, int>>("Corellon Larethian", std::pair<int, int>(2, 0))); //							Chaotic Good
+	player_alignment_deities.insert(pair<string, pair<int, int>>("Ehlonna", std::pair<int, int>(1, 0)));			//							Neutral Good
+	player_alignment_deities.insert(pair<string, pair<int, int>>("Erythnul", std::pair<int, int>(2, 2)));			//							Chaotic Evil
+	player_alignment_deities.insert(pair<string, pair<int, int>>("Fharlanghn", std::pair<int, int>(1, 1)));			//							True Neutral
+	player_alignment_deities.insert(pair<string, pair<int, int>>("Garl Glittergold", std::pair<int, int>(1, 0)));	//							Neutral Good
+	player_alignment_deities.insert(pair<string, pair<int, int>>("Gruumsh", std::pair<int, int>(2, 2)));			//							Chaotic Evil
+	player_alignment_deities.insert(pair<string, pair<int, int>>("Hieroneous", std::pair<int, int>(0, 0)));			//							Lawful Good
+	player_alignment_deities.insert(pair<string, pair<int, int>>("Hextor", std::pair<int, int>(0, 2)));				//							Lawful Evil
+	player_alignment_deities.insert(pair<string, pair<int, int>>("Kord", std::pair<int, int>(2, 0)));				//							Chaotic Good
+	player_alignment_deities.insert(pair<string, pair<int, int>>("Moradin", std::pair<int, int>(0, 0)));			//							Lawful Good
+	player_alignment_deities.insert(pair<string, pair<int, int>>("Nerull", std::pair<int, int>(1, 2)));				//							Neutral Evil
+	player_alignment_deities.insert(pair<string, pair<int, int>>("Obad-Hai", std::pair<int, int>(1, 1)));			//							True Neutral
+	player_alignment_deities.insert(pair<string, pair<int, int>>("Olidammara", std::pair<int, int>(2, 1)));			//							Chaotic Neutral
+	player_alignment_deities.insert(pair<string, pair<int, int>>("Pelor", std::pair<int, int>(1, 0)));				//							Neutral Good
+	player_alignment_deities.insert(pair<string, pair<int, int>>("St. Cuthbert", std::pair<int, int>(0, 1)));		//							Lawful Neutral
+	player_alignment_deities.insert(pair<string, pair<int, int>>("Vecna", std::pair<int, int>(1, 2)));				//							Neutral Evil
+	player_alignment_deities.insert(pair<string, pair<int, int>>("Wee Jas", std::pair<int, int>(0, 1)));			//							Lawful Neutral
+	player_alignment_deities.insert(pair<string, pair<int, int>>("Yondalla", std::pair<int, int>(0, 0)));			//							Lawful Good
 
-	pair<int, int> alignment = pAlignDeity.at(deity);
+	pair<int, int> alignment = player_alignment_deities.at(deity);
 	if (alignment.first == 1 || alignment.second == 1)
 	{ //Adjust for leeway if one of the two portions of deity's alignment is "Neutral"
 		if (alignment.first == 1)
 		{
 			pair<int, int> newAlign1 = std::pair<int, int>(alignment.first + 1, alignment.second);
 			pair<int, int> newAlign2 = std::pair<int, int>(alignment.first - 1, alignment.second);
-			pAlign.push_back(newAlign1);
-			pAlign.push_back(newAlign2);
+			player_alignment.push_back(newAlign1);
+			player_alignment.push_back(newAlign2);
 		}
 		if (alignment.second == 1)
 		{
 			pair<int, int> newAlign1 = std::pair<int, int>(alignment.first, alignment.second + 1);
 			pair<int, int> newAlign2 = std::pair<int, int>(alignment.first, alignment.second - 1);
-			pAlign.push_back(newAlign1);
-			pAlign.push_back(newAlign2);
+			player_alignment.push_back(newAlign1);
+			player_alignment.push_back(newAlign2);
 		}
 	}
 }
 
+/**
+ * @brief Determine which alignment the character can and will be based on their class chosen.
+ * 
+ * 	In D&D 3.5 Edition, certain classes cannot be of certain alignments. For example, Barbarians and Monks cannot take non-chaotic and non-lawful alignments.
+ * 	While thematic and interesting from a worldbuilding standpoint, it is still idiotic and luckily no longer a mechanic in later editions.
+ * 
+ */
 void Class::set_alignments()
 {
 	if (!name.compare("Barbarian"))
 	{
 		//Barbarian alignment: Chaotic only
-		pAlign.push_back(pair<int, int>(2, 0));
-		pAlign.push_back(pair<int, int>(2, 1));
-		pAlign.push_back(pair<int, int>(2, 2));
+		player_alignment.push_back(pair<int, int>(2, 0));
+		player_alignment.push_back(pair<int, int>(2, 1));
+		player_alignment.push_back(pair<int, int>(2, 2));
 	}
 	if (!name.compare("Bard"))
 	{
 		//Bard alignment: Non-Lawful
-		pAlign.push_back(pair<int, int>(1, 0));
-		pAlign.push_back(pair<int, int>(1, 1));
-		pAlign.push_back(pair<int, int>(1, 2));
-		pAlign.push_back(pair<int, int>(2, 0));
-		pAlign.push_back(pair<int, int>(2, 1));
-		pAlign.push_back(pair<int, int>(2, 2));
+		player_alignment.push_back(pair<int, int>(1, 0));
+		player_alignment.push_back(pair<int, int>(1, 1));
+		player_alignment.push_back(pair<int, int>(1, 2));
+		player_alignment.push_back(pair<int, int>(2, 0));
+		player_alignment.push_back(pair<int, int>(2, 1));
+		player_alignment.push_back(pair<int, int>(2, 2));
 	}
 	if (!name.compare("Cleric"))
 	{
@@ -515,95 +600,98 @@ void Class::set_alignments()
 	if (!name.compare("Druid"))
 	{
 		//Druid alignment: Neutral only
-		pAlign.push_back(pair<int, int>(0, 1));
-		pAlign.push_back(pair<int, int>(1, 0));
-		pAlign.push_back(pair<int, int>(1, 1));
-		pAlign.push_back(pair<int, int>(2, 1));
-		pAlign.push_back(pair<int, int>(1, 2));
+		player_alignment.push_back(pair<int, int>(0, 1));
+		player_alignment.push_back(pair<int, int>(1, 0));
+		player_alignment.push_back(pair<int, int>(1, 1));
+		player_alignment.push_back(pair<int, int>(2, 1));
+		player_alignment.push_back(pair<int, int>(1, 2));
 	}
 	if (!name.compare("Fighter"))
 	{
 		//Fighter alignment: Any
-		pAlign.push_back(pair<int, int>(0, 0));
-		pAlign.push_back(pair<int, int>(0, 1));
-		pAlign.push_back(pair<int, int>(0, 2));
-		pAlign.push_back(pair<int, int>(1, 0));
-		pAlign.push_back(pair<int, int>(1, 1));
-		pAlign.push_back(pair<int, int>(1, 2));
-		pAlign.push_back(pair<int, int>(2, 0));
-		pAlign.push_back(pair<int, int>(2, 1));
-		pAlign.push_back(pair<int, int>(2, 2));
+		player_alignment.push_back(pair<int, int>(0, 0));
+		player_alignment.push_back(pair<int, int>(0, 1));
+		player_alignment.push_back(pair<int, int>(0, 2));
+		player_alignment.push_back(pair<int, int>(1, 0));
+		player_alignment.push_back(pair<int, int>(1, 1));
+		player_alignment.push_back(pair<int, int>(1, 2));
+		player_alignment.push_back(pair<int, int>(2, 0));
+		player_alignment.push_back(pair<int, int>(2, 1));
+		player_alignment.push_back(pair<int, int>(2, 2));
 	}
 	if (!name.compare("Monk"))
 	{
 		//Monk alignment: Lawful only
 
-		pAlign.push_back(pair<int, int>(0, 0));
-		pAlign.push_back(pair<int, int>(0, 1));
-		pAlign.push_back(pair<int, int>(0, 2));
+		player_alignment.push_back(pair<int, int>(0, 0));
+		player_alignment.push_back(pair<int, int>(0, 1));
+		player_alignment.push_back(pair<int, int>(0, 2));
 	}
 	if (!name.compare("Paladin"))
 	{
 		//Paladin alignment: Lawful Good only
-		pAlign.push_back(pair<int, int>(0, 0));
+		player_alignment.push_back(pair<int, int>(0, 0));
 	}
 	if (!name.compare("Ranger"))
 	{
 		//Ranger alignment: Any
-		pAlign.push_back(pair<int, int>(0, 0));
-		pAlign.push_back(pair<int, int>(0, 1));
-		pAlign.push_back(pair<int, int>(0, 2));
-		pAlign.push_back(pair<int, int>(1, 0));
-		pAlign.push_back(pair<int, int>(1, 1));
-		pAlign.push_back(pair<int, int>(1, 2));
-		pAlign.push_back(pair<int, int>(2, 0));
-		pAlign.push_back(pair<int, int>(2, 1));
-		pAlign.push_back(pair<int, int>(2, 2));
+		player_alignment.push_back(pair<int, int>(0, 0));
+		player_alignment.push_back(pair<int, int>(0, 1));
+		player_alignment.push_back(pair<int, int>(0, 2));
+		player_alignment.push_back(pair<int, int>(1, 0));
+		player_alignment.push_back(pair<int, int>(1, 1));
+		player_alignment.push_back(pair<int, int>(1, 2));
+		player_alignment.push_back(pair<int, int>(2, 0));
+		player_alignment.push_back(pair<int, int>(2, 1));
+		player_alignment.push_back(pair<int, int>(2, 2));
 	}
 	if (!name.compare("Rogue"))
 	{
 		//Rogue alignment: Any
-		pAlign.push_back(pair<int, int>(0, 0));
-		pAlign.push_back(pair<int, int>(0, 1));
-		pAlign.push_back(pair<int, int>(0, 2));
-		pAlign.push_back(pair<int, int>(1, 0));
-		pAlign.push_back(pair<int, int>(1, 1));
-		pAlign.push_back(pair<int, int>(1, 2));
-		pAlign.push_back(pair<int, int>(2, 0));
-		pAlign.push_back(pair<int, int>(2, 1));
-		pAlign.push_back(pair<int, int>(2, 2));
+		player_alignment.push_back(pair<int, int>(0, 0));
+		player_alignment.push_back(pair<int, int>(0, 1));
+		player_alignment.push_back(pair<int, int>(0, 2));
+		player_alignment.push_back(pair<int, int>(1, 0));
+		player_alignment.push_back(pair<int, int>(1, 1));
+		player_alignment.push_back(pair<int, int>(1, 2));
+		player_alignment.push_back(pair<int, int>(2, 0));
+		player_alignment.push_back(pair<int, int>(2, 1));
+		player_alignment.push_back(pair<int, int>(2, 2));
 	}
 	if (!name.compare("Sorcerer"))
 	{
 		//Sorcerer alignment: Any
-		pAlign.push_back(pair<int, int>(0, 0));
-		pAlign.push_back(pair<int, int>(0, 1));
-		pAlign.push_back(pair<int, int>(0, 2));
-		pAlign.push_back(pair<int, int>(1, 0));
-		pAlign.push_back(pair<int, int>(1, 1));
-		pAlign.push_back(pair<int, int>(1, 2));
-		pAlign.push_back(pair<int, int>(2, 0));
-		pAlign.push_back(pair<int, int>(2, 1));
-		pAlign.push_back(pair<int, int>(2, 2));
+		player_alignment.push_back(pair<int, int>(0, 0));
+		player_alignment.push_back(pair<int, int>(0, 1));
+		player_alignment.push_back(pair<int, int>(0, 2));
+		player_alignment.push_back(pair<int, int>(1, 0));
+		player_alignment.push_back(pair<int, int>(1, 1));
+		player_alignment.push_back(pair<int, int>(1, 2));
+		player_alignment.push_back(pair<int, int>(2, 0));
+		player_alignment.push_back(pair<int, int>(2, 1));
+		player_alignment.push_back(pair<int, int>(2, 2));
 	}
 	if (!name.compare("Wizard"))
 	{
 		//Wizard alignment: Any
-		pAlign.push_back(pair<int, int>(0, 0));
-		pAlign.push_back(pair<int, int>(0, 1));
-		pAlign.push_back(pair<int, int>(0, 2));
-		pAlign.push_back(pair<int, int>(1, 0));
-		pAlign.push_back(pair<int, int>(1, 1));
-		pAlign.push_back(pair<int, int>(1, 2));
-		pAlign.push_back(pair<int, int>(2, 0));
-		pAlign.push_back(pair<int, int>(2, 1));
-		pAlign.push_back(pair<int, int>(2, 2));
+		player_alignment.push_back(pair<int, int>(0, 0));
+		player_alignment.push_back(pair<int, int>(0, 1));
+		player_alignment.push_back(pair<int, int>(0, 2));
+		player_alignment.push_back(pair<int, int>(1, 0));
+		player_alignment.push_back(pair<int, int>(1, 1));
+		player_alignment.push_back(pair<int, int>(1, 2));
+		player_alignment.push_back(pair<int, int>(2, 0));
+		player_alignment.push_back(pair<int, int>(2, 1));
+		player_alignment.push_back(pair<int, int>(2, 2));
 	}
 }
 
-
 // Public Functions
 
+/**
+ * @brief The main function for creating a new character.
+ * 
+ */
 void Class::create_character()
 {
 	cout << "Choose your class: ";
@@ -665,14 +753,14 @@ void Class::create_character()
 	determine_number_of_attacks();
 	determine_complexity();
 	set_stat_distribution();
-	determine_hit_die();//Just determines what die to roll for HP
+	determine_hit_die(); //Just determines what die to roll for HP
 	smart_stat_increase_loop(class_level);
 	determine_deity();
 	set_alignments();
 	determine_alignment();
 }
 
-void Class::print() const
+const void Class::print_class_information()
 {
 	cout << "Class Name: " << name << endl;
 	cout << "Complexity: " << complexity << endl;
