@@ -9,6 +9,11 @@
 #include<functional>
 #include "dnd_template_functions.h"
 
+/**
+ * @brief The representation of the character's stats and the modifiers derived from it.
+ * Also includes information about the "good" and "bad" stats (i.e., which stats should be prioritized) which
+ * is dependent on the class selected by the user. 
+ */
 class Stats{
 
 private:
@@ -32,20 +37,20 @@ private:
 public:
     Stats();
     //Getters
-    int get_base_strength() const;
-    int get_modifier_strength() const;
-    int get_base_dexterity() const;
-    int get_modifier_dexterity() const;
-    int get_base_constitution() const;
-    int get_modifier_constitution() const;
-    int get_base_intelligence() const;
-    int get_modifier_intelligence() const;
-    int get_base_wisdom() const;
-    int get_modifier_wisdom() const;
-    int get_base_charisma() const;
-    int get_modifier_charisma() const;
-    std::vector<int> get_bad_stats() const;
-    std::vector<int> get_good_stats() const;
+    const int get_base_strength();
+    const int get_modifier_strength();
+    const int get_base_dexterity();
+    const int get_modifier_dexterity();
+    const int get_base_constitution();
+    const int get_modifier_constitution();
+    const int get_base_intelligence();
+    const int get_modifier_intelligence();
+    const int get_base_wisdom();
+    const int get_modifier_wisdom();
+    const int get_base_charisma();
+    const int get_modifier_charisma();
+    const std::vector<int> get_bad_stats();
+    const std::vector<int> get_good_stats();
     //Setters
     void set_base_strength(int x);
     void set_modifier_strength(int x);

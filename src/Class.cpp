@@ -12,7 +12,7 @@ Class::Class()
 	int class_hit_die; //The Dice you roll for hp
 	std::vector<int> good_stats;
 	std::vector<int> bad_stats;
-	std::vector<std::pair<int, int>> player_alignment;
+	std::vector<std::pair<int, int>> valid_player_alignments;
 	std::vector<std::pair<std::string, std::string>> class_skills;
 	std::string alignment;
 	std::string deity;
@@ -126,7 +126,7 @@ void Class::determine_complexity()
 	}
 }
 /**
- * @brief Determine what the HD of the class selected is.
+ * @brief Determine what the Hit Die (HD) of the class selected is.
  * 	
  * 	This matters mainly for determining how much HP you gain per level as, in essence,
  * 	it is the die that you roll when leveling up. There are other uses for it, such as
@@ -477,33 +477,41 @@ void Class::determine_number_of_attacks()
 
 /**
  * @brief Determine the character's alignment after considering all constraints placed in advance (i.e., class selected).
+ * How I'm implementing the alignment system works like this:
+ * The first number corresponds to the Law <-> Chaos axis, with 0, 1, and 2 representing L, N, and C respectively.
+ * The second number corresponds to the Good <-> Evil axis, with 0, 1, and 2 representing G, N, and E respectively.
+ * This creates a set of "co-ordinates" with pair<int,int>(1,1) being True Neutral (and for the purpose of alignment stuff the center).
  * 
+ * The alignment is then determined by rolling an N-sided die (i.e., uniform distribution) where N is based on what alignments
+ * the player is allowed to have (due to class restrictions and deity selection if the player is a Cleric).
  */
 void Class::determine_alignment()
 {
-	std::map<pair<int, int>, string> alignments;
-	alignments.insert(pair<pair<int, int>, string>(pair<int, int>(0, 0), "Lawful Good"));
-	alignments.insert(pair<pair<int, int>, string>(pair<int, int>(1, 0), "Netural Good"));
-	alignments.insert(pair<pair<int, int>, string>(pair<int, int>(2, 0), "Chaotic Good"));
+	std::map<pair<int, int>, string> all_alignments;
+	all_alignments.insert(pair<pair<int, int>, string>(pair<int, int>(0, 0), "Lawful Good"));
+	all_alignments.insert(pair<pair<int, int>, string>(pair<int, int>(1, 0), "Netural Good"));
+	all_alignments.insert(pair<pair<int, int>, string>(pair<int, int>(2, 0), "Chaotic Good"));
 
-	alignments.insert(pair<pair<int, int>, string>(pair<int, int>(0, 1), "Lawful Neutral"));
-	alignments.insert(pair<pair<int, int>, string>(pair<int, int>(1, 1), "True Neutral"));
-	alignments.insert(pair<pair<int, int>, string>(pair<int, int>(2, 1), "Chaotic Neutral"));
+	all_alignments.insert(pair<pair<int, int>, string>(pair<int, int>(0, 1), "Lawful Neutral"));
+	all_alignments.insert(pair<pair<int, int>, string>(pair<int, int>(1, 1), "True Neutral"));
+	all_alignments.insert(pair<pair<int, int>, string>(pair<int, int>(2, 1), "Chaotic Neutral"));
 
-	alignments.insert(pair<pair<int, int>, string>(pair<int, int>(0, 2), "Lawful Evil"));
-	alignments.insert(pair<pair<int, int>, string>(pair<int, int>(1, 2), "Neutral Evil"));
-	alignments.insert(pair<pair<int, int>, string>(pair<int, int>(2, 2), "Chaotic Evil"));
+	all_alignments.insert(pair<pair<int, int>, string>(pair<int, int>(0, 2), "Lawful Evil"));
+	all_alignments.insert(pair<pair<int, int>, string>(pair<int, int>(1, 2), "Neutral Evil"));
+	all_alignments.insert(pair<pair<int, int>, string>(pair<int, int>(2, 2), "Chaotic Evil"));
 
-	int numFace = player_alignment.size();
-	int roll = rollXdX(1, numFace);
-	std::pair<int, int> key = player_alignment.at(roll - 1);
-	alignment = alignments.at(key);
+	int num_valid_alignments = valid_player_alignments.size();
+	int rolled_alignment = rolldX(num_valid_alignments);
+	// Fetch the key that corresponds to an alignment, then set the alignment string to whatever is at that key value in the mapping.
+	std::pair<int, int> key = valid_player_alignments.at(rolled_alignment - 1);
+	alignment = all_alignments.at(key);
 }
 
-/*
-This function is written under the assumption that non-clerics are free to worship literally any deity they choose, and can/will be revised
-should the evidence point to the contrary. Much like chooseClass, there is simply a large array of all possible SRD deities and one is selected at random.
-*/
+/**
+ * @brief Choose the deity that the player will worship at random.
+ * This function is written under the assumption that non-clerics are free to worship literally any deity they choose, and can/will be revised should the evidence point to the contrary.
+ * Much like chooseClass, there is simply a large array of all possible SRD deities and one is selected using a uniform random distribution.
+ */
 void Class::determine_deity()
 {
 	static string possible_deities[19] = {"Boccob", "Corellon Larethian", "Ehlonna", "Erythnul", "Fharlanghn", "Garl Glittergold", "Gruumsh", "Hieroneous", "Hextor", "Kord", "Moradin", "Nerull", "Obad-Hai", "Olidammara", "Pelor", "St. Cuthbert", "Vecna", "Wee Jas", "Yondalla"};
@@ -523,7 +531,7 @@ void Class::determine_deity()
  *  This means that, for example, a Chaotic Good character could worship a Neutral Good or Chaotic Neutral deity and still 'be fine'.
  * 
  */
-void Class::determine_cleric_patronage()
+inline void Class::determine_cleric_patronage()
 {
 	std::map<string, std::pair<int, int>> player_alignment_deities;
 	player_alignment_deities.insert(pair<string, pair<int, int>>("Boccob", std::pair<int, int>(1, 1)));				//							True Neutral
@@ -547,21 +555,25 @@ void Class::determine_cleric_patronage()
 	player_alignment_deities.insert(pair<string, pair<int, int>>("Yondalla", std::pair<int, int>(0, 0)));			//							Lawful Good
 
 	pair<int, int> alignment = player_alignment_deities.at(deity);
+	// If the deity selected is Neutral on either the Law/Chaos Axis (e.g., Neutral Good) or on the Good/Evil Axis (e.g., Chaotic Neutral) then allow for leeway.
 	if (alignment.first == 1 || alignment.second == 1)
-	{ //Adjust for leeway if one of the two portions of deity's alignment is "Neutral"
+	{
+		// Each component is checked separately to handle cases where the deity is considered True Neutral (Neutral on both axes), as that means there are 5 possible alignments
 		if (alignment.first == 1)
 		{
-			pair<int, int> newAlign1 = std::pair<int, int>(alignment.first + 1, alignment.second);
-			pair<int, int> newAlign2 = std::pair<int, int>(alignment.first - 1, alignment.second);
-			player_alignment.push_back(newAlign1);
-			player_alignment.push_back(newAlign2);
+			// The player can be either Chaotic or Lawful alongside the second alignment.
+			pair<int, int> chaotic_plus_second_alignment_component = std::pair<int, int>(alignment.first + 1, alignment.second);
+			pair<int, int> lawful_plus_second_alignment_component = std::pair<int, int>(alignment.first - 1, alignment.second);
+			valid_player_alignments.push_back(chaotic_plus_second_alignment_component);
+			valid_player_alignments.push_back(lawful_plus_second_alignment_component);
 		}
 		if (alignment.second == 1)
 		{
-			pair<int, int> newAlign1 = std::pair<int, int>(alignment.first, alignment.second + 1);
-			pair<int, int> newAlign2 = std::pair<int, int>(alignment.first, alignment.second - 1);
-			player_alignment.push_back(newAlign1);
-			player_alignment.push_back(newAlign2);
+			// The player can be either Evil or Good alongside the first alignment.
+			pair<int, int> first_alignment_component_plus_evil = std::pair<int, int>(alignment.first, alignment.second + 1);
+			pair<int, int> first_alignment_component_plus_good = std::pair<int, int>(alignment.first, alignment.second - 1);
+			valid_player_alignments.push_back(first_alignment_component_plus_evil);
+			valid_player_alignments.push_back(first_alignment_component_plus_good);
 		}
 	}
 }
@@ -578,19 +590,19 @@ void Class::set_alignments()
 	if (!name.compare("Barbarian"))
 	{
 		//Barbarian alignment: Chaotic only
-		player_alignment.push_back(pair<int, int>(2, 0));
-		player_alignment.push_back(pair<int, int>(2, 1));
-		player_alignment.push_back(pair<int, int>(2, 2));
+		valid_player_alignments.push_back(pair<int, int>(2, 0));
+		valid_player_alignments.push_back(pair<int, int>(2, 1));
+		valid_player_alignments.push_back(pair<int, int>(2, 2));
 	}
 	if (!name.compare("Bard"))
 	{
 		//Bard alignment: Non-Lawful
-		player_alignment.push_back(pair<int, int>(1, 0));
-		player_alignment.push_back(pair<int, int>(1, 1));
-		player_alignment.push_back(pair<int, int>(1, 2));
-		player_alignment.push_back(pair<int, int>(2, 0));
-		player_alignment.push_back(pair<int, int>(2, 1));
-		player_alignment.push_back(pair<int, int>(2, 2));
+		valid_player_alignments.push_back(pair<int, int>(1, 0));
+		valid_player_alignments.push_back(pair<int, int>(1, 1));
+		valid_player_alignments.push_back(pair<int, int>(1, 2));
+		valid_player_alignments.push_back(pair<int, int>(2, 0));
+		valid_player_alignments.push_back(pair<int, int>(2, 1));
+		valid_player_alignments.push_back(pair<int, int>(2, 2));
 	}
 	if (!name.compare("Cleric"))
 	{
@@ -600,89 +612,89 @@ void Class::set_alignments()
 	if (!name.compare("Druid"))
 	{
 		//Druid alignment: Neutral only
-		player_alignment.push_back(pair<int, int>(0, 1));
-		player_alignment.push_back(pair<int, int>(1, 0));
-		player_alignment.push_back(pair<int, int>(1, 1));
-		player_alignment.push_back(pair<int, int>(2, 1));
-		player_alignment.push_back(pair<int, int>(1, 2));
+		valid_player_alignments.push_back(pair<int, int>(0, 1));
+		valid_player_alignments.push_back(pair<int, int>(1, 0));
+		valid_player_alignments.push_back(pair<int, int>(1, 1));
+		valid_player_alignments.push_back(pair<int, int>(2, 1));
+		valid_player_alignments.push_back(pair<int, int>(1, 2));
 	}
 	if (!name.compare("Fighter"))
 	{
 		//Fighter alignment: Any
-		player_alignment.push_back(pair<int, int>(0, 0));
-		player_alignment.push_back(pair<int, int>(0, 1));
-		player_alignment.push_back(pair<int, int>(0, 2));
-		player_alignment.push_back(pair<int, int>(1, 0));
-		player_alignment.push_back(pair<int, int>(1, 1));
-		player_alignment.push_back(pair<int, int>(1, 2));
-		player_alignment.push_back(pair<int, int>(2, 0));
-		player_alignment.push_back(pair<int, int>(2, 1));
-		player_alignment.push_back(pair<int, int>(2, 2));
+		valid_player_alignments.push_back(pair<int, int>(0, 0));
+		valid_player_alignments.push_back(pair<int, int>(0, 1));
+		valid_player_alignments.push_back(pair<int, int>(0, 2));
+		valid_player_alignments.push_back(pair<int, int>(1, 0));
+		valid_player_alignments.push_back(pair<int, int>(1, 1));
+		valid_player_alignments.push_back(pair<int, int>(1, 2));
+		valid_player_alignments.push_back(pair<int, int>(2, 0));
+		valid_player_alignments.push_back(pair<int, int>(2, 1));
+		valid_player_alignments.push_back(pair<int, int>(2, 2));
 	}
 	if (!name.compare("Monk"))
 	{
 		//Monk alignment: Lawful only
 
-		player_alignment.push_back(pair<int, int>(0, 0));
-		player_alignment.push_back(pair<int, int>(0, 1));
-		player_alignment.push_back(pair<int, int>(0, 2));
+		valid_player_alignments.push_back(pair<int, int>(0, 0));
+		valid_player_alignments.push_back(pair<int, int>(0, 1));
+		valid_player_alignments.push_back(pair<int, int>(0, 2));
 	}
 	if (!name.compare("Paladin"))
 	{
 		//Paladin alignment: Lawful Good only
-		player_alignment.push_back(pair<int, int>(0, 0));
+		valid_player_alignments.push_back(pair<int, int>(0, 0));
 	}
 	if (!name.compare("Ranger"))
 	{
 		//Ranger alignment: Any
-		player_alignment.push_back(pair<int, int>(0, 0));
-		player_alignment.push_back(pair<int, int>(0, 1));
-		player_alignment.push_back(pair<int, int>(0, 2));
-		player_alignment.push_back(pair<int, int>(1, 0));
-		player_alignment.push_back(pair<int, int>(1, 1));
-		player_alignment.push_back(pair<int, int>(1, 2));
-		player_alignment.push_back(pair<int, int>(2, 0));
-		player_alignment.push_back(pair<int, int>(2, 1));
-		player_alignment.push_back(pair<int, int>(2, 2));
+		valid_player_alignments.push_back(pair<int, int>(0, 0));
+		valid_player_alignments.push_back(pair<int, int>(0, 1));
+		valid_player_alignments.push_back(pair<int, int>(0, 2));
+		valid_player_alignments.push_back(pair<int, int>(1, 0));
+		valid_player_alignments.push_back(pair<int, int>(1, 1));
+		valid_player_alignments.push_back(pair<int, int>(1, 2));
+		valid_player_alignments.push_back(pair<int, int>(2, 0));
+		valid_player_alignments.push_back(pair<int, int>(2, 1));
+		valid_player_alignments.push_back(pair<int, int>(2, 2));
 	}
 	if (!name.compare("Rogue"))
 	{
 		//Rogue alignment: Any
-		player_alignment.push_back(pair<int, int>(0, 0));
-		player_alignment.push_back(pair<int, int>(0, 1));
-		player_alignment.push_back(pair<int, int>(0, 2));
-		player_alignment.push_back(pair<int, int>(1, 0));
-		player_alignment.push_back(pair<int, int>(1, 1));
-		player_alignment.push_back(pair<int, int>(1, 2));
-		player_alignment.push_back(pair<int, int>(2, 0));
-		player_alignment.push_back(pair<int, int>(2, 1));
-		player_alignment.push_back(pair<int, int>(2, 2));
+		valid_player_alignments.push_back(pair<int, int>(0, 0));
+		valid_player_alignments.push_back(pair<int, int>(0, 1));
+		valid_player_alignments.push_back(pair<int, int>(0, 2));
+		valid_player_alignments.push_back(pair<int, int>(1, 0));
+		valid_player_alignments.push_back(pair<int, int>(1, 1));
+		valid_player_alignments.push_back(pair<int, int>(1, 2));
+		valid_player_alignments.push_back(pair<int, int>(2, 0));
+		valid_player_alignments.push_back(pair<int, int>(2, 1));
+		valid_player_alignments.push_back(pair<int, int>(2, 2));
 	}
 	if (!name.compare("Sorcerer"))
 	{
 		//Sorcerer alignment: Any
-		player_alignment.push_back(pair<int, int>(0, 0));
-		player_alignment.push_back(pair<int, int>(0, 1));
-		player_alignment.push_back(pair<int, int>(0, 2));
-		player_alignment.push_back(pair<int, int>(1, 0));
-		player_alignment.push_back(pair<int, int>(1, 1));
-		player_alignment.push_back(pair<int, int>(1, 2));
-		player_alignment.push_back(pair<int, int>(2, 0));
-		player_alignment.push_back(pair<int, int>(2, 1));
-		player_alignment.push_back(pair<int, int>(2, 2));
+		valid_player_alignments.push_back(pair<int, int>(0, 0));
+		valid_player_alignments.push_back(pair<int, int>(0, 1));
+		valid_player_alignments.push_back(pair<int, int>(0, 2));
+		valid_player_alignments.push_back(pair<int, int>(1, 0));
+		valid_player_alignments.push_back(pair<int, int>(1, 1));
+		valid_player_alignments.push_back(pair<int, int>(1, 2));
+		valid_player_alignments.push_back(pair<int, int>(2, 0));
+		valid_player_alignments.push_back(pair<int, int>(2, 1));
+		valid_player_alignments.push_back(pair<int, int>(2, 2));
 	}
 	if (!name.compare("Wizard"))
 	{
 		//Wizard alignment: Any
-		player_alignment.push_back(pair<int, int>(0, 0));
-		player_alignment.push_back(pair<int, int>(0, 1));
-		player_alignment.push_back(pair<int, int>(0, 2));
-		player_alignment.push_back(pair<int, int>(1, 0));
-		player_alignment.push_back(pair<int, int>(1, 1));
-		player_alignment.push_back(pair<int, int>(1, 2));
-		player_alignment.push_back(pair<int, int>(2, 0));
-		player_alignment.push_back(pair<int, int>(2, 1));
-		player_alignment.push_back(pair<int, int>(2, 2));
+		valid_player_alignments.push_back(pair<int, int>(0, 0));
+		valid_player_alignments.push_back(pair<int, int>(0, 1));
+		valid_player_alignments.push_back(pair<int, int>(0, 2));
+		valid_player_alignments.push_back(pair<int, int>(1, 0));
+		valid_player_alignments.push_back(pair<int, int>(1, 1));
+		valid_player_alignments.push_back(pair<int, int>(1, 2));
+		valid_player_alignments.push_back(pair<int, int>(2, 0));
+		valid_player_alignments.push_back(pair<int, int>(2, 1));
+		valid_player_alignments.push_back(pair<int, int>(2, 2));
 	}
 }
 

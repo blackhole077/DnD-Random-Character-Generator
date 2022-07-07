@@ -23,8 +23,9 @@ private:
   std::vector<int> good_stats;
   // The 'bad stats' (i.e., the stats that are more luxury or just not needed) that should not be prioritized when allocating stats and stat increases.
   std::vector<int> bad_stats;
-  // The player's alignment. Necessary for making sure there is no contradiction in alignment-class selections.
-  std::vector<std::pair<int, int>> player_alignment;
+
+  // A vector that describes all valid alignments the player is able to have, based on class selection and the choice of deity, in the case of Clerics.
+  std::vector<std::pair<int, int>> valid_player_alignments;
   // The skills that the class can put skill points into for full value
   std::vector<std::pair<std::string, std::string>> class_skills;
   // The player's alignment (as a string)
@@ -35,8 +36,11 @@ private:
   int base_attack_bonus;
   // The number of attacks the player has. Subsequent attacks essentially take a cumulative -5 to hit.
   int number_of_attacks;
-  // How many skill points the class gains by default.
+  // How many skill points the class gains by default. This is combined with the intelligence modifier to determine how many skill points are gained upon leveling up (minimum 1).
   int skill_rank_gain;
+
+  /** FUNCTIONS FOR FILLING OUT THE CLASS STRUCT **/
+
   void determine_complexity();
   void determine_hit_die();
   void determine_alignment();
@@ -51,12 +55,6 @@ private:
 
 public:
   Class(); //Constructor with no args
-  /*
-	How I'm implementing the alignment system works like this:
-	The first number corresponds to the Law <-> Chaos axis, with 0, 1, and 2 representing L, N, and C respectively.
-	The second number corresponds to the Good <-> Evil axis, with 0, 1, and 2 representing G, N, and E respectively.
-	This creates a set of "co-ordinates" with pair<int,int>(1,1) being True Neutral (and for the purpose of alignment stuff the center).
-	*/
 
   void create_character();
 

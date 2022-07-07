@@ -1,7 +1,7 @@
 #include "../headers/dnd_template_functions.h"
 using namespace std;
-const int roll3d6Drop1[19] = {0, 0, 0, 11, 285, 2187, 8480, 18981, 34095, 53500, 73675, 85007, 87748, 81348, 66142, 44256, 26459, 13260, 4566};
-std::vector<int> weights(roll3d6Drop1, roll3d6Drop1 + sizeof(roll3d6Drop1) / sizeof(roll3d6Drop1[0]));
+const int roll_4d6_drop_lowest[19] = {0, 0, 0, 11, 285, 2187, 8480, 18981, 34095, 53500, 73675, 85007, 87748, 81348, 66142, 44256, 26459, 13260, 4566};
+std::vector<int> weights(roll_4d6_drop_lowest, roll_4d6_drop_lowest + sizeof(roll_4d6_drop_lowest) / sizeof(roll_4d6_drop_lowest[0]));
 std::discrete_distribution<> dist(weights.begin(), weights.end());
 const unsigned int seed = time(0);
 std::mt19937 engine(seed);

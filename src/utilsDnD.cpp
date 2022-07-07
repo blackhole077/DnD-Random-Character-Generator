@@ -93,12 +93,6 @@ std::map<int,int> smart_stat_distribution(std::vector<int> bad_class_stats, std:
 }
 
 /*
-Due to extra restrictions that are placed upon the Cleric class, this function is only called when the class selected is "Cleric".
-It is meant to adjust for alignment restrictions and therefore is called before determineAlignment.
-*/
-
-
-/*
 TODO: Create function that takes in all character information. Have it determine the number of Ability Point Raises (APR), then distribute said raises in a
 	  random but "smart" fashion based on roughly 4 different options (1. Raise a "Good Stat" if the stat is odd (meaning bonus will increase) OR if you have more than one APR left 2. Raise a "bad stat" for the same reasons minus the OR 3. Raise CON if HD is greater than 6 (d8, d12) 4. Raise a random stat)
 	  These options will have percent chance such that options 1 and 4 are more likely than 2 or 3 (might just delete 3 honestly).
@@ -117,15 +111,6 @@ Thus once the age is calculated it must also be checked against a threshold to d
 This function is called in CharGen.cpp
 */
 
-/*
-The function determineNumAbilityPoints is called when determining how many ability points should be granted to a player
-based on their level. Every 4 levels grants the player one extra ability point which will be allocated into the six main stats
-*/
-
-int determineNumAbilityPoints(int level) {
-	int number = floor(level / 4);
-	return number;
-}
 /*
 calcHitPoints is utilized in determining the HP of the character-to-be. Using the ECL (Effective Character Level) and HD (Hit Die) of the class,
 the raw HP value per level is randomly rolled, and the appropriate CON Bonus is applied at each level.

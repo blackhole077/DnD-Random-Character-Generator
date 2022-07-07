@@ -67,19 +67,22 @@ std::vector<int> Race::get_stats_modifier() const
 	return stats_mod;
 }
 //Misc Functions
+
+/**
+ * @brief Determine the race of the character via uniform random distribution.
+ * 
+ * The purpose of determineRace is to randomly select the race of the generated character-to-be.
+ * Since we would want each race to be equally likely as the next, a uniform distribution is utilized.
+ * Upon selecting a race, which is stored as a string (or an array of characters), it finds the attributes it needs to modify.
+ * These attributes include bonuses and penalties to the 6 stats and the base age, or age of adulthood for that particular race.
+ */
 void Race::determine_race()
 {
 	/*Idea here is to have a list of all generic races, generate a random index and return the race associated with said index.*/
-	std::vector<std::string> races = {"Human", "Elf", "Dwarf", "Halfling", "Gnome", "Half-Elf", "Half-Orc"};
-	//Need to ask about this one
-	std::random_device rd;
-	// obtain a random number from hardware
-	std::mt19937 eng(rd());
-	// seed the generator
-	std::uniform_int_distribution<> distr(0, 6); // define the range
-	int randIndex = distr(eng);
-	std::string race = races[randIndex];
-	set_race_name(race);
+	std::vector<std::string> all_srd_races = {"Human", "Elf", "Dwarf", "Halfling", "Gnome", "Half-Elf", "Half-Orc"};
+	int selected_race_index = rolldX(all_srd_races.size());
+	std::string selected_race = all_srd_races[selected_race_index];
+	set_race_name(selected_race);
 }
 
 /**

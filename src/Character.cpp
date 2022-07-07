@@ -64,7 +64,5 @@ void Character::print_character_info()
     cout << "Height: " << race.get_height() << " Inches" << endl;
     cout << "Weight: " << race.get_weight() << " lbs" << endl;
     cout << "Age: " << race.get_age() << " Years Old" << endl;
-    cout << "Alignment: " << alignment << endl;
-    cout << "Deity: " << deity << endl;
     cout << "Total Hitpoints: " << total_hitpoints << " HP" << endl;
 }

@@ -12,28 +12,28 @@
 #include <map>
 
 int main(){
-    Stats slist;
+    Stats stats_list;
     Race race;
     Class selected_class;
-    slist.generate_stats();
+    stats_list.generate_stats();
     race.determine_race();
     race.determine_gender();
     race.determine_height_weight();
     selected_class.create_character();
-    std::map<int,int> stats_map = smart_stat_distribution(selected_class.get_bad_stats(),slist.get_bad_stats(),selected_class.get_good_stats(),slist.get_good_stats());
-    slist.set_base_strength(stats_map.at(1));
-    slist.set_base_dexterity(stats_map.at(2));
-    slist.set_base_constitution(stats_map.at(3));
-    slist.set_base_intelligence(stats_map.at(4));
-    slist.set_base_wisdom(stats_map.at(5));
-    slist.set_base_charisma(stats_map.at(6));
-    slist.generate_stats_vector();
+    std::map<int,int> stats_map = smart_stat_distribution(selected_class.get_bad_stats(),stats_list.get_bad_stats(),selected_class.get_good_stats(),stats_list.get_good_stats());
+    stats_list.set_base_strength(stats_map.at(1));
+    stats_list.set_base_dexterity(stats_map.at(2));
+    stats_list.set_base_constitution(stats_map.at(3));
+    stats_list.set_base_intelligence(stats_map.at(4));
+    stats_list.set_base_wisdom(stats_map.at(5));
+    stats_list.set_base_charisma(stats_map.at(6));
+    stats_list.generate_stats_vector();
     race.generate_stats_modifier();
-    slist.modify_stats_race(race.get_stats_modifier());
+    stats_list.modify_stats_race(race.get_stats_modifier());
     race.determine_age(selected_class.get_complexity());
-    selected_class.print();
+    selected_class.print_class_information();
     race.print_race_info();
-    slist.printStats();
+    stats_list.printStats();
 
     /*
     Step 0: Roll stats
@@ -46,6 +46,6 @@ int main(){
     Step 5: Modify Stats (Age)
     */
 
-    Character character(race,slist);
+    Character character(race,stats_list);
 
 }
